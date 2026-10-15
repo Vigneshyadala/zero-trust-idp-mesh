@@ -14,7 +14,11 @@ def test_discovery_document_has_required_fields():
     assert "code" in body["response_types_supported"]
 
 
-def test_jwks_endpoint_returns_key_set():
+def test_jwks_endpoint_returns_ed25519_key():
     response = client.get("/jwks.json")
     assert response.status_code == 200
-    assert response.json() == {"keys": []}
+    key = response.json()["keys"][0]
+    assert key["kty"] == "OKP"
+    assert key["crv"] == "Ed25519"
+    assert key["alg"] == "EdDSA"
+    assert key["kid"]

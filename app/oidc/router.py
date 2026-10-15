@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.core import signing
 from app.core.config import settings
 
 router = APIRouter(tags=["oidc"])
@@ -24,5 +25,4 @@ def discovery():
 
 @router.get("/jwks.json")
 def jwks():
-    # Placeholder: public signing keys are added once key management exists.
-    return {"keys": []}
+    return signing.jwks()

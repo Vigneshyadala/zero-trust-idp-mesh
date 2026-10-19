@@ -7,6 +7,7 @@ from app.core import signing
 from app.core.config import settings
 from app.did.keys import public_key_from_did
 from app.oidc.clients import get_client
+from app.oidc.pending import create_pending
 from app.oidc.pkce import is_valid_challenge, verify_s256
 from app.oidc.store import consume_code, create_code
 
@@ -80,7 +81,20 @@ def authorize(
         return fail("invalid_request", "PKCE with code_challenge_method=S256 is required")
 
     if not settings.dev_login:
-        return fail("temporarily_unavailable", "user authentication (WebAuthn) is not enabled yet")
+        # Real authentication: park the request and send the user to the passkey login page.
+        request_id = create_pending(
+            client_id=client.client_id,
+            redirect_uri=redirect_uri,
+            scope=" ".join(s for s in scopes if s in SUPPORTED_SCOPES),
+            state=state,
+            nonce=nonce,
+            code_challenge=code_challenge,
+        )
+        return RedirectResponse(
+            f"{settings.issuer}/login?request_id={request_id}",
+            status_code=302,
+            headers=NO_STORE,
+        )
 
     try:
         public_key_from_did(login_hint or "")

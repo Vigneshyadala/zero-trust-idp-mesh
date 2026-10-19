@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zero-Trust IdP - Passkey sign-in</title>
+  <link rel="stylesheet" href="/static/passkeys.css">
+</head>
+<body>
+  <main>
+    <h1>Zero-Trust IdP Mesh</h1>
+    <p class="muted">Passwordless sign-in with a DID and a passkey (WebAuthn).</p>
+
+    <section>
+      <h2>1. Your identity (DID)</h2>
+      <p class="muted">The DID is created in this browser. Its private key never leaves it.</p>
+      <label for="did">DID</label>
+      <input id="did" type="text" spellcheck="false" autocomplete="off" placeholder="did:key:z6Mk...">
+      <button id="create-identity" type="button">Create new identity</button>
+    </section>
+
+    <section>
+      <h2>2. Register a passkey</h2>
+      <p class="muted">Uses Windows Hello, a phone or a security key. Needs a PIN or biometric.</p>
+      <button id="register" type="button">Register passkey for this DID</button>
+    </section>
+
+    <section id="login-section" hidden>
+      <h2>3. Sign in</h2>
+      <p class="muted">An application is asking you to sign in.</p>
+      <button id="login" type="button">Sign in with passkey</button>
+    </section>
+
+    <section id="no-request" hidden>
+      <h2>3. Sign in</h2>
+      <p class="muted">No sign-in request is in progress. Start one from the application, or open the
+      <code>/authorize</code> URL from the README.</p>
+    </section>
+
+    <pre id="log" aria-live="polite"></pre>
+  </main>
+  <script src="/static/passkeys.js"></script>
+</body>
+</html>

@@ -136,10 +136,13 @@ def test_openid_scope_required():
     assert _query(response)["error"] == "invalid_scope"
 
 
-def test_login_disabled_by_default(monkeypatch):
+def test_without_dev_login_user_is_sent_to_passkey_login(monkeypatch):
     monkeypatch.setattr(settings, "dev_login", False)
     response = _authorize(secrets.token_urlsafe(32))
-    assert _query(response)["error"] == "temporarily_unavailable"
+    assert response.status_code == 302
+    location = urlsplit(response.headers["location"])
+    assert location.path == "/login"
+    assert "request_id" in parse_qs(location.query)
 
 
 def test_unsupported_grant_type_rejected():

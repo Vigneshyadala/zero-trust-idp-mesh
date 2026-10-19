@@ -1,0 +1,12 @@
+body { font-family: system-ui, sans-serif; background: #f5f6f8; color: #1d2330; margin: 0; }
+main { max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+section { background: #fff; border: 1px solid #dde1e8; border-radius: 8px; padding: 1rem 1.25rem; margin: 1rem 0; }
+h1 { margin-bottom: 0.25rem; }
+h2 { font-size: 1.05rem; margin-top: 0; }
+.muted { color: #5b6475; font-size: 0.9rem; }
+label { display: block; font-weight: 600; margin: 0.5rem 0 0.25rem; }
+input { width: 100%; box-sizing: border-box; padding: 0.5rem; font-family: ui-monospace, monospace; font-size: 0.85rem; }
+button { margin-top: 0.75rem; padding: 0.55rem 1rem; border: 0; border-radius: 6px; background: #2d4cc8; color: #fff; font-size: 0.95rem; cursor: pointer; }
+button:disabled { background: #9aa4c9; cursor: wait; }
+pre { background: #10141f; color: #c9d4f0; padding: 0.75rem; border-radius: 6px; min-height: 3rem; white-space: pre-wrap; word-break: break-word; }
+[hidden] { display: none; }

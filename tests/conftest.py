@@ -11,3 +11,10 @@ def _fresh_revocation_store():
     from app.revocation.store import InMemoryRevocationStore, set_store
 
     set_store(InMemoryRevocationStore())
+
+
+@pytest.fixture(autouse=True)
+def _fresh_audit_log():
+    from app.audit.log import AuditLog, set_audit
+
+    set_audit(AuditLog())

@@ -1,3 +1,4 @@
+from app.audit.log import AuditEvent, get_audit
 from fastapi import Request
 from app.policy.runtime import evaluate_request
 from urllib.parse import urlencode
@@ -145,10 +146,29 @@ def token(
         or entry.redirect_uri != redirect_uri
         or not verify_s256(code_verifier, entry.code_challenge)
     ):
+        get_audit().record(
+            AuditEvent(
+                event="token_denied",
+                outcome="error",
+                client_id=client_id,
+                ip=request.client.host if request.client else None,
+                detail={"reason": "invalid_grant"},
+            )
+        )
         return _token_error("invalid_grant", "authorization code is invalid, expired or already used")
 
     decision = evaluate_request(request)
     if not decision.allowed:
+        get_audit().record(
+            AuditEvent(
+                event="token_denied",
+                outcome="blocked",
+                subject=entry.subject,
+                client_id=client_id,
+                ip=request.client.host if request.client else None,
+                detail={"score": decision.score, "reasons": list(decision.reasons)},
+            )
+        )
         return _token_error(
             "access_denied", "request blocked by zero-trust policy", status=403
         )
@@ -165,6 +185,15 @@ def token(
         audience=client_id,
         lifetime=settings.access_token_lifetime,
         extra=id_extra,
+    )
+    get_audit().record(
+        AuditEvent(
+            event="token_issued",
+            outcome="success",
+            subject=entry.subject,
+            client_id=client_id,
+            ip=request.client.host if request.client else None,
+        )
     )
     return JSONResponse(
         {

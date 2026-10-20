@@ -4,6 +4,7 @@ from fastapi import APIRouter, Form
 from fastapi.responses import Response
 
 from app.core import signing
+from app.audit.log import AuditEvent, get_audit
 from app.revocation.store import get_store
 
 router = APIRouter()
@@ -18,5 +19,13 @@ def revoke(token: str | None = Form(None)):
             claims = None
         if claims and claims.get("jti"):
             get_store().revoke(claims["jti"], int(claims["exp"]))
+            get_audit().record(
+                AuditEvent(
+                    event="token_revoked",
+                    outcome="success",
+                    subject=claims.get("sub"),
+                    client_id=claims.get("client_id"),
+                )
+            )
     # Always 200 so the endpoint is not an oracle for token validity.
     return Response(status_code=200, headers={"Cache-Control": "no-store"})

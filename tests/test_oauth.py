@@ -187,3 +187,45 @@ def test_denied_attempt_burns_the_authorization_code(monkeypatch):
     retry = _exchange(code, verifier)
     assert retry.status_code == 400
     assert retry.json()["error"] == "invalid_grant"
+
+
+def test_successful_exchange_is_audited():
+    from app.audit.log import get_audit
+
+    verifier, code = _new_code()
+    assert _exchange(code, verifier).status_code == 200
+    event = get_audit().recent()[0]
+    assert event.event == "token_issued" and event.outcome == "success"
+    assert event.client_id == "demo-client" and event.subject
+    assert "access_token" not in str(event)
+
+
+def test_policy_block_is_audited(monkeypatch):
+    from app.audit.log import get_audit
+
+    verifier, code = _new_code()
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "10")
+    assert _exchange(code, verifier).status_code == 403
+    event = get_audit().recent()[0]
+    assert event.event == "token_denied" and event.outcome == "blocked"
+    assert event.detail["reasons"] == ["invalid_ip"]
+
+
+def test_bad_code_is_audited():
+    from app.audit.log import get_audit
+
+    verifier, _ = _new_code()
+    assert _exchange("bogus", verifier).status_code == 400
+    event = get_audit().recent()[0]
+    assert event.event == "token_denied" and event.outcome == "error"
+    assert event.detail == {"reason": "invalid_grant"}
+
+
+def test_revocation_is_audited():
+    from app.audit.log import get_audit
+    from app.core import signing
+
+    token = signing.issue_token("did:key:zTest", signing.settings.issuer)
+    client.post("/revoke", data={"token": token})
+    event = get_audit().recent()[0]
+    assert event.event == "token_revoked" and event.subject == "did:key:zTest"

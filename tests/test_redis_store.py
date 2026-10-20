@@ -61,7 +61,8 @@ def test_filter_key_gets_a_ttl_just_past_its_hour():
     store = RedisBloomRevocationStore(client)
     store.revoke("abc", exp_in(600))
     (ttl,) = client.ttls.values()
-    assert 0 < ttl <= BUCKET_SECONDS + 60
+    # token lifetime (600s) can push expiry into the next hourly bucket
+    assert 0 < ttl <= BUCKET_SECONDS + 600 + 60
 
 
 def test_second_revoke_in_same_hour_reuses_the_filter():

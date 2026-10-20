@@ -1,3 +1,4 @@
+from app.revocation.store import get_store
 import base64
 import hashlib
 import os
@@ -73,10 +74,14 @@ def issue_token(subject: str, audience: str, lifetime: int = 3600, extra: dict |
 def verify_token(token: str, audience: str) -> dict:
     # The algorithm list is pinned on purpose: it blocks "alg: none" and
     # algorithm-confusion attacks.
-    return jwt.decode(
+    claims = jwt.decode(
         token,
         _private_key.public_key(),
         algorithms=["EdDSA"],
         audience=audience,
         issuer=settings.issuer,
     )
+    jti = claims.get("jti")
+    if jti and get_store().is_revoked(jti):
+        raise jwt.InvalidTokenError("token has been revoked")
+    return claims

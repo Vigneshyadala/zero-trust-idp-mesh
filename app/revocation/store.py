@@ -7,6 +7,7 @@ Redis Bloom filter shared across the mesh.
 """
 from __future__ import annotations
 
+import os
 import threading
 import time
 from typing import Protocol
@@ -37,7 +38,16 @@ class InMemoryRevocationStore:
             return jti in self._entries
 
 
-_store: RevocationStore = InMemoryRevocationStore()
+def _default_store() -> RevocationStore:
+    url = os.getenv("IDP_REDIS_URL")
+    if url:
+        from app.revocation.redis_store import RedisBloomRevocationStore
+
+        return RedisBloomRevocationStore.from_url(url)
+    return InMemoryRevocationStore()
+
+
+_store: RevocationStore = _default_store()
 
 
 def get_store() -> RevocationStore:

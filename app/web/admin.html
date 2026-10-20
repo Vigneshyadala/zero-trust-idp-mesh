@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero-Trust IdP - Admin</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 1000px;
+         padding: 0 1rem; color: #1a1f2b; background: #f5f6f8; }
+  h1 { margin-bottom: .25rem; }
+  .bar { display: flex; gap: .5rem; margin: 1rem 0; }
+  input, select, button { padding: .5rem .75rem; font-size: 1rem; }
+  input { flex: 1; }
+  button { background: #2b4acb; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+  .cards { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+  .card { background: #fff; border: 1px solid #dde; border-radius: 8px;
+          padding: .75rem 1rem; min-width: 150px; }
+  .card b { display: block; font-size: 1.6rem; }
+  table { width: 100%; border-collapse: collapse; background: #fff; }
+  th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #eee;
+           font-size: .9rem; word-break: break-all; }
+  .blocked { color: #b42318; font-weight: 600; }
+  .error { color: #b54708; font-weight: 600; }
+  .success { color: #067647; }
+  #msg { color: #b42318; min-height: 1.5rem; }
+</style>
+</head>
+<body>
+  <h1>Zero-Trust IdP Mesh</h1>
+  <p>Authentication flows and blocked zero-trust policy events.</p>
+
+  <div class="bar">
+    <input id="key" type="password" placeholder="Admin key" autocomplete="off">
+    <button id="load" type="button">Load</button>
+    <select id="outcome">
+      <option value="">All outcomes</option>
+      <option value="success">Success</option>
+      <option value="blocked">Blocked by policy</option>
+      <option value="error">Errors</option>
+    </select>
+  </div>
+  <div id="msg"></div>
+
+  <div id="cards" class="cards"></div>
+
+  <table>
+    <thead>
+      <tr><th>Time</th><th>Event</th><th>Outcome</th><th>Subject</th>
+          <th>Client</th><th>IP</th><th>Detail</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+  let key = "";
+  const $ = (id) => document.getElementById(id);
+  const OUTCOMES = ["success", "blocked", "error"];
+
+  async function api(path) {
+    const r = await fetch(path, { headers: { "X-Admin-Key": key } });
+    if (!r.ok) {
+      throw new Error(
+        r.status === 401 ? "Invalid admin key"
+        : r.status === 503 ? "Admin disabled: set IDP_ADMIN_KEY on the server"
+        : "Request failed (" + r.status + ")"
+      );
+    }
+    return r.json();
+  }
+
+  function cell(tr, text, cls) {
+    const td = document.createElement("td");
+    td.textContent = text;
+    if (cls) td.className = cls;
+    tr.appendChild(td);
+  }
+
+  async function refresh() {
+    $("msg").textContent = "";
+    try {
+      const outcome = $("outcome").value;
+      const q = outcome ? "&outcome=" + encodeURIComponent(outcome) : "";
+      const [summary, events] = await Promise.all([
+        api("/admin/api/summary"),
+        api("/admin/api/events?limit=100" + q),
+      ]);
+
+      const cards = $("cards");
+      cards.replaceChildren();
+      const names = Object.keys(summary.counts);
+      if (!names.length) cards.textContent = "No events yet.";
+      for (const name of names) {
+        const d = document.createElement("div");
+        d.className = "card";
+        const b = document.createElement("b");
+        b.textContent = summary.counts[name];
+        d.appendChild(b);
+        d.appendChild(document.createTextNode(name));
+        cards.appendChild(d);
+      }
+
+      const body = $("rows");
+      body.replaceChildren();
+      for (const e of events.events) {
+        const tr = document.createElement("tr");
+        cell(tr, new Date(e.ts * 1000).toLocaleString());
+        cell(tr, e.event);
+        cell(tr, e.outcome, OUTCOMES.includes(e.outcome) ? e.outcome : "");
+        cell(tr, e.subject || "");
+        cell(tr, e.client_id || "");
+        cell(tr, e.ip || "");
+        cell(tr, JSON.stringify(e.detail));
+        body.appendChild(tr);
+      }
+    } catch (err) {
+      $("msg").textContent = err.message;
+    }
+  }
+
+  $("load").addEventListener("click", () => { key = $("key").value; refresh(); });
+  $("outcome").addEventListener("change", () => { if (key) refresh(); });
+  setInterval(() => { if (key) refresh(); }, 5000);
+</script>
+</body>
+</html>

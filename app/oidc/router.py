@@ -1,3 +1,5 @@
+from fastapi import Request
+from app.policy.runtime import evaluate_request
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Form, HTTPException
@@ -122,6 +124,7 @@ def _token_error(error: str, description: str, status: int = 400) -> JSONRespons
 
 @router.post("/token")
 def token(
+    request: Request,
     grant_type: str | None = Form(None),
     code: str | None = Form(None),
     redirect_uri: str | None = Form(None),
@@ -143,6 +146,12 @@ def token(
         or not verify_s256(code_verifier, entry.code_challenge)
     ):
         return _token_error("invalid_grant", "authorization code is invalid, expired or already used")
+
+    decision = evaluate_request(request)
+    if not decision.allowed:
+        return _token_error(
+            "access_denied", "request blocked by zero-trust policy", status=403
+        )
 
     access_token = signing.issue_token(
         entry.subject,

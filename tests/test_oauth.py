@@ -149,3 +149,41 @@ def test_unsupported_grant_type_rejected():
     response = client.post("/token", data={"grant_type": "password"})
     assert response.status_code == 400
     assert response.json()["error"] == "unsupported_grant_type"
+
+
+def test_token_denied_by_zero_trust_policy(monkeypatch):
+    verifier, code = _new_code()
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "10")
+    response = _exchange(code, verifier)
+    assert response.status_code == 403
+    assert response.json()["error"] == "access_denied"
+    assert "access_token" not in response.json()
+
+
+def test_denied_attempt_burns_the_authorization_code(monkeypatch):
+    verifier, code = _new_code()
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "10")
+    assert _exchange(code, verifier).status_code == 403
+    monkeypatch.delenv("IDP_DENY_THRESHOLD")
+    retry = _exchange(code, verifier)
+    assert retry.status_code == 400
+    assert retry.json()["error"] == "invalid_grant"
+
+
+def test_token_denied_by_zero_trust_policy(monkeypatch):
+    verifier, code = _new_code()
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "10")
+    response = _exchange(code, verifier)
+    assert response.status_code == 403
+    assert response.json()["error"] == "access_denied"
+    assert "access_token" not in response.json()
+
+
+def test_denied_attempt_burns_the_authorization_code(monkeypatch):
+    verifier, code = _new_code()
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "10")
+    assert _exchange(code, verifier).status_code == 403
+    monkeypatch.delenv("IDP_DENY_THRESHOLD")
+    retry = _exchange(code, verifier)
+    assert retry.status_code == 400
+    assert retry.json()["error"] == "invalid_grant"

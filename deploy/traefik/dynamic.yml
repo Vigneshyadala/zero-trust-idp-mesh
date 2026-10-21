@@ -1,0 +1,22 @@
+http:
+  routers:
+    idp:
+      rule: "PathPrefix(`/`)"
+      entryPoints:
+        - web
+      service: idp
+      middlewares:
+        - security-headers
+
+  services:
+    idp:
+      loadBalancer:
+        servers:
+          - url: "http://app:8000"
+
+  middlewares:
+    security-headers:
+      headers:
+        frameDeny: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"

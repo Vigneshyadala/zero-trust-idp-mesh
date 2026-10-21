@@ -1,0 +1,60 @@
+services:
+  app:
+    build: .
+    image: zero-trust-idp:dev
+    command:
+      - uvicorn
+      - app.main:app
+      - --host=0.0.0.0
+      - --port=8000
+      - --proxy-headers
+      - --forwarded-allow-ips=*
+    environment:
+      IDP_ISSUER: ${IDP_ISSUER:-http://localhost:8000}
+      IDP_RP_ID: ${IDP_RP_ID:-localhost}
+      IDP_RP_ORIGIN: ${IDP_RP_ORIGIN:-http://localhost:8000}
+      IDP_REDIS_URL: redis://redis:6379/0
+      IDP_ADMIN_KEY: ${IDP_ADMIN_KEY:?set IDP_ADMIN_KEY in .env}
+      IDP_AUDIT_FILE: /srv/data/audit.log
+    volumes:
+      - idp-keys:/srv/keys
+      - idp-data:/srv/data
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks: [mesh]
+    restart: unless-stopped
+
+  redis:
+    image: redis/redis-stack-server:latest
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis-data:/data
+    networks: [mesh]
+    restart: unless-stopped
+
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --providers.file.watch=true
+      - --entrypoints.web.address=:80
+      - --api.dashboard=false
+      - --accesslog=true
+      - --log.level=INFO
+    depends_on:
+      - app
+    networks: [mesh]
+    restart: unless-stopped
+
+networks:
+  mesh:
+
+volumes:
+  idp-keys:
+  idp-data:
+  redis-data:

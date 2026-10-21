@@ -1,0 +1,6 @@
+services:
+  traefik:
+    ports:
+      - "8000:80"
+    volumes:
+      - ./deploy/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro

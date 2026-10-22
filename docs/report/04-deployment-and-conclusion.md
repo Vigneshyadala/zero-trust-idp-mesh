@@ -118,12 +118,12 @@ backing up.
 | Suite | Tests |
 |-------|-------|
 | Week 1 and 2 (OIDC, DID, ledger, passkeys, signing) | 45 |
-| Policy engine and runtime | 13 |
-| Revocation, Redis store, `/revoke` | 13 |
+| Policy engine, runtime and `/token` enforcement | 15 |
+| Revocation, Redis store, `/revoke` | 15 (one live-Redis test skipped) |
 | Audit log and its wiring | 10 |
 | Admin dashboard | 8 |
 | Penetration tests | 18 |
-| **Passing in total** | **110, with 1 skipped** |
+| **Total** | **111 collected: 110 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

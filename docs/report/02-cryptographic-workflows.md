@@ -11,10 +11,44 @@ and cannot be altered by the server.
 
 ## 2.2 Passkey registration and sign-in (WebAuthn)
 
-[CHECK before submitting: describe the registration and login ceremonies as
-implemented in `app/passkeys/router.py`: the challenge, what the credential is
-bound to (the DID), the relying-party ID and origin checks, signature counter
-handling, and the user-verification requirement (`IDP_REQUIRE_UV`).]
+**Registration** (`POST /webauthn/register/options`, then `/register/verify`):
+
+1. The browser sends its DID. The server validates it and extracts the
+   Ed25519 public key.
+2. The server returns WebAuthn registration options with a fresh challenge.
+   The relying party ID is `IDP_RP_ID`.
+3. The browser creates the passkey (Windows Hello, a phone or a security key)
+   and returns the attestation.
+4. The server verifies the response against the challenge, the expected relying
+   party ID and the expected origin (`IDP_RP_ORIGIN`). User verification (PIN or
+   biometric) is required when `IDP_REQUIRE_UV=1`, which is the default.
+5. The registration is tied to the DID through a proof message built from the
+   DID and the challenge. [CHECK before submitting: confirm in
+   `register_proof_message` that this message must be signed by the DID's own
+   key, then state that here.]
+6. The credential, its public key and its sign count are stored against the DID
+   (`data/`, git-ignored). The endpoint answers 201.
+
+**Sign-in** (`POST /webauthn/login/options`, then `/login/verify`):
+
+1. The browser asks for options for a DID and receives a challenge.
+2. The authenticator signs the challenge. The server verifies the assertion
+   against the stored credential public key, the relying party ID, the origin
+   and the stored sign count, again requiring user verification when enabled.
+3. On success the stored sign count is updated and the server issues the
+   single-use authorization code described in section 2.3.
+
+**Properties and limits**
+
+- The relying party ID and origin checks bind each passkey to this service, so
+  a credential cannot be used from a look-alike site.
+- The sign counter is a clone-detection signal: an assertion whose counter does
+  not increase is rejected by the WebAuthn library. Many synced passkeys (for
+  example, Google Password Manager) always report a counter of zero, so for
+  those the check gives no protection.
+- A WebAuthn deployment is tied to its origin. Changing the host or scheme
+  (for example, from `http://localhost:8000` to `https://localhost:8443`)
+  invalidates existing passkeys, and users register again.
 
 ## 2.3 Authorization code and PKCE
 

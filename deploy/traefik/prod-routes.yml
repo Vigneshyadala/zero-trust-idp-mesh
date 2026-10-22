@@ -1,0 +1,31 @@
+# Replace idp.example.com with your real domain before deploying.
+http:
+  routers:
+    idp:
+      rule: "Host(`idp.example.com`)"
+      entryPoints:
+        - websecure
+      service: idp
+      middlewares:
+        - security-headers
+        - hsts
+      tls:
+        certResolver: letsencrypt
+
+  services:
+    idp:
+      loadBalancer:
+        servers:
+          - url: "http://app:8000"
+
+  middlewares:
+    security-headers:
+      headers:
+        frameDeny: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer"
+    hsts:
+      headers:
+        stsSeconds: 31536000
+        stsIncludeSubdomains: false
+        stsPreload: false

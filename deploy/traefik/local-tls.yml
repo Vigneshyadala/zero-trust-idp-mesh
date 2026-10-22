@@ -1,0 +1,21 @@
+tls:
+  certificates:
+    - certFile: /certs/localhost.crt
+      keyFile: /certs/localhost.key
+
+http:
+  routers:
+    idp-http-redirect:
+      rule: "PathPrefix(`/`)"
+      entryPoints:
+        - web
+      middlewares:
+        - to-https
+      service: noop@internal
+
+  middlewares:
+    to-https:
+      redirectScheme:
+        scheme: https
+        port: "8443"
+        permanent: false

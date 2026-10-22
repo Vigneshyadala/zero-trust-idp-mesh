@@ -499,3 +499,10 @@ live domain. The security audit (section 3) lists these and the other findings
 with recommended fixes. The most valuable next steps are an introspection
 endpoint so resource servers honour revocation, real device and user-verification
 signals in the policy engine, rate limiting, and DID-based admin authentication.
+## 4.9 Live Redis verification
+
+The Redis Bloom filter store was exercised against a real Redis Stack
+container (`redis/redis-stack-server`) on 22 October 2026 using
+`IDP_REDIS_URL=redis://localhost:6379/0 python -m pytest tests/test_redis_store_integration.py`.
+The test passed: a revoked identifier was reported revoked, and an unseen
+identifier was not.

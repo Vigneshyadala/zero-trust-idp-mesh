@@ -13,10 +13,11 @@ WebAuthn (FIDO2) and cryptographic identity anchoring.
 | 1 | OIDC / OAuth 2.0 server, ed25519 DIDs, repo rules | Complete |
 | 2 | WebAuthn passkeys, simulated ledger anchoring | Complete |
 | 3 | Zero-trust policy engine, token revocation, admin dashboard | Complete |
-| 4 | Penetration tests, Docker + Traefik deployment, final report | In progress |
+| 4 | Penetration tests, Docker + Traefik deployment, final report | Complete |
 
-Week 4 so far: penetration test suite, Docker image, compose stack and local
-HTTPS are done. Remaining: production TLS configuration and the final report.
+Week 4: penetration test suite, Docker image, compose stack, local HTTPS,
+production TLS configuration (written, not yet run against a live domain) and
+the final report in `docs/report/` are done.
 
 ## Implemented
 
@@ -56,7 +57,7 @@ HTTPS are done. Remaining: production TLS configuration and the final report.
 - Admin dashboard at `/admin`: read-only view of audit events and counts,
   protected by an `X-Admin-Key` header. Disabled unless `IDP_ADMIN_KEY` is set.
 
-### Week 4 (so far)
+### Week 4
 
 - Penetration test suite (`tests/test_pentest.py`, results in
   `docs/pentest-results.txt`): replay of codes and revoked tokens, expired
@@ -67,6 +68,10 @@ HTTPS are done. Remaining: production TLS configuration and the final report.
 - Compose stack: app, Redis and Traefik. Only Traefik is published to the host.
 - Local HTTPS through Traefik with a self-signed development certificate and
   an HTTP to HTTPS redirect.
+- Production TLS configuration (`docker-compose.prod.yml`): Let's Encrypt with
+  automatic renewal, HSTS and a hostname rule. Validated, not run live.
+- Final report in `docs/report/`: architecture, cryptographic workflows,
+  security audit, deployment and conclusion.
 - 110 automated tests passing (1 skipped: the live-Redis test, which runs only
   when `IDP_REDIS_URL` is set).
 

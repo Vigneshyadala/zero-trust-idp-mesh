@@ -21,11 +21,13 @@ and cannot be altered by the server.
    and returns the attestation.
 4. The server verifies the response against the challenge, the expected relying
    party ID and the expected origin (`IDP_RP_ORIGIN`). User verification (PIN or
-   biometric) is required when `IDP_REQUIRE_UV=1`, which is the default.
-5. The registration is tied to the DID through a proof message built from the
-   DID and the challenge. [CHECK before submitting: confirm in
-   `register_proof_message` that this message must be signed by the DID's own
-   key, then state that here.]
+   biometric) is required when `IDP_REQUIRE_UV=1` (the default) and only
+   preferred when it is `0`.
+5. The registration is bound to the DID by a proof. The browser signs the
+   message `webauthn-register:{did}:{challenge}` with the DID's Ed25519 key
+   and sends the signature as `did_proof`; the server checks it against the
+   public key in the DID. The message contains the single-use registration
+   challenge, so a signature cannot be replayed for another registration.
 6. The credential, its public key and its sign count are stored against the DID
    (`data/`, git-ignored). The endpoint answers 201.
 

@@ -106,8 +106,12 @@ sequenceDiagram
 ## 1.7 Scope and simulation notes
 
 - The ledger is a **simulation** of blockchain anchoring, as the project plan
-  allows. [CHECK before submitting: describe here exactly how anchoring and
-  verification work in `app/ledger/`.]
+  allows. It is an append-only, hash-chained list of blocks stored in
+  `data/ledger.json`. Each block holds an index, timestamp, entry and the
+  previous block's hash, and its own SHA-256 hash covers all four. There is
+  no consensus or distribution: one process owns the file, so the ledger
+  detects accidental or partial tampering but not a complete rewrite by
+  someone who controls the file (see section 2.6).
 - Authorization codes are held in process memory, so the service runs as a
   single instance. Revocation state is the only shared state, and it uses
   Redis when configured.

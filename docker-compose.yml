@@ -40,12 +40,15 @@ services:
   traefik:
     image: traefik:v3.1
     command:
-      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
       - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       - --api.dashboard=false
       - --accesslog=true
       - --log.level=INFO
+    volumes:
+      - ./deploy/traefik/routes.yml:/etc/traefik/dynamic/routes.yml:ro
     depends_on:
       - app
     networks: [mesh]

@@ -1,6 +1,12 @@
 services:
+  app:
+    environment:
+      IDP_ISSUER: https://localhost:8443
+      IDP_RP_ORIGIN: https://localhost:8443
   traefik:
     ports:
       - "8000:80"
+      - "8443:443"
     volumes:
-      - ./deploy/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./deploy/traefik/local-tls.yml:/etc/traefik/dynamic/tls.yml:ro
+      - ./deploy/traefik/certs:/certs:ro

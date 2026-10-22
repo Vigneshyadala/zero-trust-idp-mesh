@@ -7,3 +7,4 @@ keys/
 data/
 
 .env
+deploy/traefik/certs/

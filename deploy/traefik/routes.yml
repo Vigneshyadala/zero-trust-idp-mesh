@@ -3,10 +3,11 @@ http:
     idp:
       rule: "PathPrefix(`/`)"
       entryPoints:
-        - web
+        - websecure
       service: idp
       middlewares:
         - security-headers
+      tls: {}
 
   services:
     idp:

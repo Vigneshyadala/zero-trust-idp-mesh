@@ -123,7 +123,8 @@ backing up.
 | Audit log and its wiring | 10 |
 | Admin dashboard | 8 |
 | Penetration tests | 18 |
-| **Total** | **111 collected: 110 passed, 1 skipped** |
+| Token introspection | 8 |
+| **Total** | **119 collected: 118 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

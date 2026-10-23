@@ -56,6 +56,10 @@ the final report in `docs/report/` are done.
   JSON-lines file. Tokens and codes are never logged.
 - Admin dashboard at `/admin`: read-only view of audit events and counts,
   protected by an `X-Admin-Key` header. Disabled unless `IDP_ADMIN_KEY` is set.
+- Token introspection at `POST /introspect` (RFC 7662 style): resource servers
+  ask whether an access token is still active, so revocation reaches them.
+  Protected by an `X-Introspection-Key` header; off unless
+  `IDP_INTROSPECTION_KEY` is set.
 
 ### Week 4
 
@@ -107,6 +111,7 @@ the final report in `docs/report/` are done.
 | `IDP_DENY_THRESHOLD` | Risk score that blocks issuance | `70` |
 | `IDP_ADMIN_KEY` | Admin dashboard key (dashboard off if unset) | unset |
 | `IDP_AUDIT_FILE` | Also write audit events to this JSON-lines file | unset |
+| `IDP_INTROSPECTION_KEY` | Key for `POST /introspect` (endpoint off if unset) | unset |
 
 ## Run locally
 

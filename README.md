@@ -76,7 +76,7 @@ the final report in `docs/report/` are done.
   automatic renewal, HSTS and a hostname rule. Validated, not run live.
 - Final report in `docs/report/`: architecture, cryptographic workflows,
   security audit, deployment and conclusion.
-- 110 automated tests passing (1 skipped: the live-Redis test, which runs only
+- 118 automated tests passing (1 skipped: the live-Redis test, which runs only
   when `IDP_REDIS_URL` is set).
 
 ## Security notes

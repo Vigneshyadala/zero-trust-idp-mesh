@@ -317,7 +317,7 @@ Severity is the author's assessment for a production deployment.
 | F1 | Revocation is enforced inside the IdP's token verification only. A resource server that validates tokens with the published key alone will not see revocations. There is no introspection endpoint. | Medium | Mitigated: key-protected `POST /introspect` shows revocation to resource servers (access tokens only) |
 | F2 | `/revoke` verifies tokens with the issuer as audience, so only access tokens can be revoked; ID tokens are ignored | Low | Open. ID tokens are for the client only |
 | F3 | The policy engine's device-known and user-verified signals are placeholders assumed true. Only IP and time of day are active | Medium | Open. Store these facts with the code at login |
-| F4 | No rate limiting or lockout on `/token`, `/revoke` or the admin key check | Medium | Open. Add a rate limit at Traefik or in the app |
+| F4 | Rate limiting covers `/token`, `/revoke`, `/introspect` and the admin API (per client address, sliding window, HTTP 429 with `Retry-After`, audited). State is in memory, so limits are per process and reset on restart | Low | Mitigated. Move the counters to Redis to share limits across instances |
 | F5 | Admin access uses one shared key in a header, compared in constant time. No per-user identity, no expiry | Medium | Open. Bind admin access to a DID and passkey |
 | F6 | Audit log is an in-memory buffer of 1000 events; the optional file is not tamper-evident | Medium | Open. Hash-chain the file or ship it off-host |
 | F7 | Authorization codes live in process memory, so the service is single-instance | Low | Accepted for this scope. Move to Redis to scale out |
@@ -348,7 +348,7 @@ Severity is the author's assessment for a production deployment.
 ## 3.6 Recommended next steps
 
 1. Roll out introspection to resource servers, each with its own key (F1).
-2. Add rate limiting and temporary lockout (F4).
+2. Move rate-limit counters to Redis so limits hold across instances (F4).
 3. Carry the real device and user-verification facts into the policy engine (F3).
 4. Replace the shared admin key with DID and passkey authentication (F5).
 5. Make the audit log tamper-evident and durable (F6).

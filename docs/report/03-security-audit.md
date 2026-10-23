@@ -60,7 +60,7 @@ Severity is the author's assessment for a production deployment.
 
 | ID | Finding | Severity | Status |
 |----|---------|----------|--------|
-| F1 | Revocation is enforced inside the IdP's token verification only. A resource server that validates tokens with the published key alone will not see revocations. There is no introspection endpoint. | Medium | Open. Add an introspection endpoint |
+| F1 | Revocation is enforced inside the IdP's token verification only. A resource server that validates tokens with the published key alone will not see revocations. There is no introspection endpoint. | Medium | Mitigated: key-protected `POST /introspect` shows revocation to resource servers (access tokens only) |
 | F2 | `/revoke` verifies tokens with the issuer as audience, so only access tokens can be revoked; ID tokens are ignored | Low | Open. ID tokens are for the client only |
 | F3 | The policy engine's device-known and user-verified signals are placeholders assumed true. Only IP and time of day are active | Medium | Open. Store these facts with the code at login |
 | F4 | No rate limiting or lockout on `/token`, `/revoke` or the admin key check | Medium | Open. Add a rate limit at Traefik or in the app |
@@ -93,7 +93,7 @@ Severity is the author's assessment for a production deployment.
 
 ## 3.6 Recommended next steps
 
-1. Add an introspection endpoint so resource servers can honour revocation (F1).
+1. Roll out introspection to resource servers, each with its own key (F1).
 2. Add rate limiting and temporary lockout (F4).
 3. Carry the real device and user-verification facts into the policy engine (F3).
 4. Replace the shared admin key with DID and passkey authentication (F5).

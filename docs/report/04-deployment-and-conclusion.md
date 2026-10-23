@@ -141,8 +141,7 @@ Against the project plan, every deliverable is implemented and tested, with thes
 exceptions stated openly: the ledger is a simulation, two policy signals are
 placeholders, and the production TLS configuration has not been run against a
 live domain. The security audit (section 3) lists these and the other findings
-with recommended fixes. The most valuable next steps are an introspection
-endpoint so resource servers honour revocation, real device and user-verification
+with recommended fixes. The most valuable next steps are real device and user-verification
 signals in the policy engine, rate limiting, and DID-based admin authentication.
 ## 4.9 Live Redis verification
 

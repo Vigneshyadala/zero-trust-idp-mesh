@@ -230,6 +230,7 @@ def login_verify(request: LoginVerifyRequest):
         scope=pending.scope,
         nonce=pending.nonce,
         code_challenge=pending.code_challenge,
+        user_verified=bool(getattr(verified, "user_verified", False)),
     )
     query = {"code": code}
     if pending.state is not None:

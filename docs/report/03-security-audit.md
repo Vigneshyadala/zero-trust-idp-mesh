@@ -14,7 +14,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py -v
 
 Result at the time of writing: 18 attack tests, all resisted. The full suite
-has 137 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 142 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -62,7 +62,7 @@ Severity is the author's assessment for a production deployment.
 |----|---------|----------|--------|
 | F1 | Revocation is enforced inside the IdP's token verification only. A resource server that validates tokens with the published key alone will not see revocations. There is no introspection endpoint. | Medium | Mitigated: key-protected `POST /introspect` shows revocation to resource servers (access tokens only) |
 | F2 | `/revoke` verifies tokens with the issuer as audience, so only access tokens can be revoked; ID tokens are ignored | Low | Open. ID tokens are for the client only |
-| F3 | The policy engine's device-known and user-verified signals are placeholders assumed true. Only IP and time of day are active | Medium | Open. Store these facts with the code at login |
+| F3 | The device-known signal in the policy engine is a placeholder assumed true. The user-verified signal is real: it comes from the passkey login and is stored with the authorization code (a dev-login code counts as unverified). It changes decisions only when `IDP_REQUIRE_UV=0`, because the default already refuses logins without user verification | Medium | Partly mitigated. Track known devices |
 | F4 | Rate limiting covers `/token`, `/revoke`, `/introspect` and the admin API (per client address, sliding window, HTTP 429 with `Retry-After`, audited). State is in memory, so limits are per process and reset on restart | Low | Mitigated. Move the counters to Redis to share limits across instances |
 | F5 | Admin access uses one shared key in a header, compared in constant time. No per-user identity, no expiry | Medium | Open. Bind admin access to a DID and passkey |
 | F6 | Audit log is an in-memory buffer of 1000 events; the optional file is not tamper-evident | Medium | Open. Hash-chain the file or ship it off-host |
@@ -95,7 +95,7 @@ Severity is the author's assessment for a production deployment.
 
 1. Roll out introspection to resource servers, each with its own key (F1).
 2. Move rate-limit counters to Redis so limits hold across instances (F4).
-3. Carry the real device and user-verification facts into the policy engine (F3).
+3. Track known devices and feed that fact into the policy engine (F3).
 4. Replace the shared admin key with DID and passkey authentication (F5).
 5. Make the audit log tamper-evident and durable (F6).
 6. Add a password to Redis (F9) and run the production TLS configuration

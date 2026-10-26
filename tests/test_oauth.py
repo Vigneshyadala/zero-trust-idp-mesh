@@ -208,7 +208,7 @@ def test_policy_block_is_audited(monkeypatch):
     assert _exchange(code, verifier).status_code == 403
     event = get_audit().recent()[0]
     assert event.event == "token_denied" and event.outcome == "blocked"
-    assert event.detail["reasons"] == ["invalid_ip"]
+    assert event.detail["reasons"] == ["invalid_ip", "no_user_verification"]
 
 
 def test_bad_code_is_audited():

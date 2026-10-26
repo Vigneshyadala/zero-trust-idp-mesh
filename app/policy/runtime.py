@@ -53,15 +53,19 @@ def policy_now(utc_now: datetime | None = None) -> datetime:
         return utc_now.astimezone(timezone.utc)
 
 
-def evaluate_request(request, now: datetime | None = None) -> PolicyDecision:
+def evaluate_request(
+    request, now: datetime | None = None, user_verified: bool = True
+) -> PolicyDecision:
+    """Score a token request. /token always passes the stored user_verified
+    value; the default only spares direct callers (unit tests) from passing it.
+    """
     host = request.client.host if request.client else ""
-    # TODO (later): known_device and user_verified should come from data stored
-    # with the authorization code at login time. Until then they are assumed
-    # true, so only the IP and time-of-day signals are active.
+    # user_verified comes from the passkey login (stored with the authorization
+    # code). known_device is still a placeholder assumed true.
     signals = RiskSignals(
         ip=host,
         known_device=True,
-        user_verified=True,
+        user_verified=user_verified,
         when=now or policy_now(),
     )
     decision = evaluate(signals, load_config())

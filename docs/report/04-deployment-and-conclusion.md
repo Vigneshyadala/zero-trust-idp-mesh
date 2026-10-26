@@ -104,8 +104,9 @@ backing up.
   a rotation is future work.
 - **Passkeys and origin.** Changing the host or scheme changes the WebAuthn
   origin, so existing passkeys stop working.
-- **Time zone.** The container clock is UTC; the policy engine's allowed hours
-  use server local time.
+- **Time zone.** The policy engine evaluates allowed hours in the zone set by
+  `IDP_TIMEZONE` (an IANA name such as `Asia/Kolkata`). The Docker stack defaults
+  to UTC; without the setting the server's local time is used.
 - **Audit.** The in-memory audit buffer is lost on restart unless
   `IDP_AUDIT_FILE` is set (the compose file sets it to `/srv/data/audit.log`).
 - **Common local problem.** If `docker` commands fail with "failed to connect to
@@ -125,7 +126,8 @@ backing up.
 | Penetration tests | 18 |
 | Rate limiting | 13 |
 | Token introspection | 8 |
-| **Total** | **132 collected: 131 passed, 1 skipped** |
+| Policy time zone | 6 |
+| **Total** | **138 collected: 137 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

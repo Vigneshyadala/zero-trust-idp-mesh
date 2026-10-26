@@ -268,7 +268,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py -v
 
 Result at the time of writing: 18 attack tests, all resisted. The full suite
-has 131 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 137 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -324,7 +324,7 @@ Severity is the author's assessment for a production deployment.
 | F8 | The app trusts forwarded client addresses from any source (`--forwarded-allow-ips=*`) | Low | Mitigated: the app is reachable only through Traefik on a private network |
 | F9 | Redis has no password or TLS and relies on network isolation | Low | Mitigated by isolation. Add auth for production |
 | F10 | The ledger is a simulation: `validate()` detects an edited block but not a complete consistent rewrite of the file | Medium | Accepted. See section 2.6 |
-| F11 | Time-of-day policy uses server local time; the container clock is UTC | Low | Open. Make the time zone configurable |
+| F11 | Time-of-day policy time zone | Low | Mitigated: `IDP_TIMEZONE` sets the zone (UTC in the Docker stack); allowed hours are evaluated in that zone |
 | F12 | Redis Bloom filter has a 0.1% false-positive rate: a valid token may be rejected and the user signs in again | Low | Accepted and documented |
 | F13 | WebAuthn ceremony attacks (for example, a replayed assertion) are not part of the penetration suite | Low | Open. Add tests |
 | F14 | Production TLS and HSTS are untested against a live domain | Low | Open. Verify when a domain is available |
@@ -459,8 +459,9 @@ backing up.
   a rotation is future work.
 - **Passkeys and origin.** Changing the host or scheme changes the WebAuthn
   origin, so existing passkeys stop working.
-- **Time zone.** The container clock is UTC; the policy engine's allowed hours
-  use server local time.
+- **Time zone.** The policy engine evaluates allowed hours in the zone set by
+  `IDP_TIMEZONE` (an IANA name such as `Asia/Kolkata`). The Docker stack defaults
+  to UTC; without the setting the server's local time is used.
 - **Audit.** The in-memory audit buffer is lost on restart unless
   `IDP_AUDIT_FILE` is set (the compose file sets it to `/srv/data/audit.log`).
 - **Common local problem.** If `docker` commands fail with "failed to connect to
@@ -480,7 +481,8 @@ backing up.
 | Penetration tests | 18 |
 | Rate limiting | 13 |
 | Token introspection | 8 |
-| **Total** | **132 collected: 131 passed, 1 skipped** |
+| Policy time zone | 6 |
+| **Total** | **138 collected: 137 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

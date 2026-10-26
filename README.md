@@ -78,7 +78,7 @@ the final report in `docs/report/` are done.
   automatic renewal, HSTS and a hostname rule. Validated, not run live.
 - Final report in `docs/report/`: architecture, cryptographic workflows,
   security audit, deployment and conclusion.
-- 131 automated tests passing (1 skipped: the live-Redis test, which runs only
+- 137 automated tests passing (1 skipped: the live-Redis test, which runs only
   when `IDP_REDIS_URL` is set).
 
 ## Security notes
@@ -109,7 +109,8 @@ the final report in `docs/report/` are done.
 | `IDP_DEV_LOGIN` | Development-only login (never in production) | `0` |
 | `IDP_REDIS_URL` | Use the Redis Bloom revocation store | unset (in-memory) |
 | `IDP_BLOCKED_NETWORKS` | Comma-separated CIDRs the policy engine blocks | none |
-| `IDP_ALLOWED_HOURS` | Allowed hours, `start-end` (local time) | `6-22` |
+| `IDP_ALLOWED_HOURS` | Allowed hours, `start-end`, in the policy time zone | `6-22` |
+| `IDP_TIMEZONE` | Policy time zone, an IANA name such as `Asia/Kolkata`; unknown names fall back to UTC | server local time (`UTC` in Docker) |
 | `IDP_DENY_THRESHOLD` | Risk score that blocks issuance | `70` |
 | `IDP_ADMIN_KEY` | Admin dashboard key (dashboard off if unset) | unset |
 | `IDP_AUDIT_FILE` | Also write audit events to this JSON-lines file | unset |

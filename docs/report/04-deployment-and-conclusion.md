@@ -127,7 +127,8 @@ backing up.
 | Rate limiting | 13 |
 | Token introspection | 8 |
 | Policy time zone | 6 |
-| **Total** | **138 collected: 137 passed, 1 skipped** |
+| User verification | 5 |
+| **Total** | **143 collected: 142 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.
@@ -142,11 +143,9 @@ key-protected dashboard, and the whole system runs as a hardened container stack
 behind Traefik with TLS.
 
 Against the project plan, every deliverable is implemented and tested, with these
-exceptions stated openly: the ledger is a simulation, two policy signals are
-placeholders, and the production TLS configuration has not been run against a
+exceptions stated openly: the ledger is a simulation, one policy signal (known device) is a placeholder, and the production TLS configuration has not been run against a
 live domain. The security audit (section 3) lists these and the other findings
-with recommended fixes. The most valuable next steps are real device and user-verification
-signals in the policy engine, rate limiting, and DID-based admin authentication.
+with recommended fixes. The most valuable next steps are known-device tracking in the policy engine, shared rate-limit counters in Redis, and DID-based admin authentication.
 ## 4.9 Live Redis verification
 
 The Redis Bloom filter store was exercised against a real Redis Stack

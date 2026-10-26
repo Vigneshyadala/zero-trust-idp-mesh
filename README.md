@@ -78,7 +78,7 @@ the final report in `docs/report/` are done.
   automatic renewal, HSTS and a hostname rule. Validated, not run live.
 - Final report in `docs/report/`: architecture, cryptographic workflows,
   security audit, deployment and conclusion.
-- 137 automated tests passing (1 skipped: the live-Redis test, which runs only
+- 142 automated tests passing (1 skipped: the live-Redis test, which runs only
   when `IDP_REDIS_URL` is set).
 
 ## Security notes
@@ -90,8 +90,10 @@ the final report in `docs/report/` are done.
   `login_hint` DID without proof. It is off by default and must never be
   enabled in a deployed environment. Passkey login replaces it.
 - Authorization codes are stored in memory (single process).
-- The policy engine's device and user-verification signals are placeholders
-  that are currently assumed true; only IP and time-of-day are active.
+- The policy engine's known-device signal is a placeholder assumed true. The
+  user-verification signal is real (taken from the passkey login) but only
+  changes decisions when `IDP_REQUIRE_UV=0`, since the default refuses logins
+  without user verification.
 - Behind a proxy, the app trusts forwarded client addresses from any source
   (`--forwarded-allow-ips=*`). This is acceptable only because the app is
   reachable solely through Traefik on a private network.

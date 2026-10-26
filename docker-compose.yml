@@ -16,6 +16,7 @@ services:
       IDP_REDIS_URL: redis://redis:6379/0
       IDP_ADMIN_KEY: ${IDP_ADMIN_KEY:?set IDP_ADMIN_KEY in .env}
       IDP_AUDIT_FILE: /srv/data/audit.log
+      IDP_TIMEZONE: ${IDP_TIMEZONE:-UTC}
     volumes:
       - idp-keys:/srv/keys
       - idp-data:/srv/data

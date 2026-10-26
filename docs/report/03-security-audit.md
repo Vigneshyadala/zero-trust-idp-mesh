@@ -14,7 +14,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py -v
 
 Result at the time of writing: 18 attack tests, all resisted. The full suite
-has 131 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 137 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -70,7 +70,7 @@ Severity is the author's assessment for a production deployment.
 | F8 | The app trusts forwarded client addresses from any source (`--forwarded-allow-ips=*`) | Low | Mitigated: the app is reachable only through Traefik on a private network |
 | F9 | Redis has no password or TLS and relies on network isolation | Low | Mitigated by isolation. Add auth for production |
 | F10 | The ledger is a simulation: `validate()` detects an edited block but not a complete consistent rewrite of the file | Medium | Accepted. See section 2.6 |
-| F11 | Time-of-day policy uses server local time; the container clock is UTC | Low | Open. Make the time zone configurable |
+| F11 | Time-of-day policy time zone | Low | Mitigated: `IDP_TIMEZONE` sets the zone (UTC in the Docker stack); allowed hours are evaluated in that zone |
 | F12 | Redis Bloom filter has a 0.1% false-positive rate: a valid token may be rejected and the user signs in again | Low | Accepted and documented |
 | F13 | WebAuthn ceremony attacks (for example, a replayed assertion) are not part of the penetration suite | Low | Open. Add tests |
 | F14 | Production TLS and HSTS are untested against a live domain | Low | Open. Verify when a domain is available |

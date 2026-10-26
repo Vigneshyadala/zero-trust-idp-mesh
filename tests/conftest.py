@@ -25,3 +25,11 @@ def _rate_limit_generous():
     from app.ratelimit.limiter import RateLimiter, set_limiter
 
     set_limiter(RateLimiter(10_000, 60))
+
+
+@pytest.fixture(autouse=True)
+def _policy_test_threshold(monkeypatch):
+    # The test client's address ("testclient") is not a valid IP (+50) and
+    # dev-login codes are unverified (+40). Production blocks at 70; tests that
+    # exercise blocking set their own threshold.
+    monkeypatch.setenv("IDP_DENY_THRESHOLD", "100")

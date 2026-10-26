@@ -157,7 +157,7 @@ def token(
         )
         return _token_error("invalid_grant", "authorization code is invalid, expired or already used")
 
-    decision = evaluate_request(request)
+    decision = evaluate_request(request, user_verified=entry.user_verified)
     if not decision.allowed:
         get_audit().record(
             AuditEvent(
@@ -189,6 +189,7 @@ def token(
     get_audit().record(
         AuditEvent(
             event="token_issued",
+            detail={"user_verified": entry.user_verified},
             outcome="success",
             subject=entry.subject,
             client_id=client_id,

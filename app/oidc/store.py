@@ -14,6 +14,9 @@ class AuthCode:
     nonce: str | None
     code_challenge: str
     expires_at: float
+    # True only when the authenticator verified the user (PIN or biometric).
+    # Defaults to False, so a code created without proof counts as unverified.
+    user_verified: bool = False
 
 
 # In-memory store: fine for one process. Moves to Redis in Week 3.

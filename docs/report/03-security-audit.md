@@ -11,10 +11,10 @@ test plays the attacker; a passing test means the attack failed. The suite runs
 in-process against the real application. Output is saved in
 `docs/pentest-results.txt` and can be reproduced with:
 
-    python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py -v
+    python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py tests/test_pentest_webauthn.py -v
 
-Result at the time of writing: 29 attack tests, all resisted. The full suite
-has 153 passing tests and 1 skipped (the live-Redis test, which runs only when
+Result at the time of writing: 36 attack tests, all resisted. The full suite
+has 160 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -50,6 +50,13 @@ has 153 passing tests and 1 skipped (the live-Redis test, which runs only when
 | 27 | Rate limiting | Guess the introspection key | HTTP 429 after the limit, including for the right key until the window passes |
 | 28 | Rate limiting | Brute-force authorization codes at `/token` | HTTP 400 up to the limit, then 429; blocked attempts audited |
 | 29 | Rate limiting | Exceed the limit while holding a real code | Refused with 429; the code is not consumed |
+| 30 | WebAuthn | Login assertion signed by a different key under a real credential ID | Refused (HTTP 401), no code issued |
+| 31 | WebAuthn | Assertion of ceremony type `webauthn.create` presented at login | Refused (HTTP 401) |
+| 32 | WebAuthn | Passkey login without user verification while it is required | Refused (HTTP 401) |
+| 33 | WebAuthn | Registration challenge used at the login endpoint | Refused (HTTP 400) |
+| 34 | WebAuthn | Login challenge used at the registration endpoint | Refused (HTTP 400), nothing registered |
+| 35 | WebAuthn | Two logins opened from one authorization request | Only one completes; the other is refused (HTTP 400) |
+| 36 | Policy | Passkey login without user verification under a strict policy | Blocked at `/token` (HTTP 403) and audited; with user verification the token is issued |
 
 ## 3.3 Man-in-the-middle
 
@@ -83,7 +90,7 @@ Severity is the author's assessment for a production deployment.
 | F10 | The ledger is a simulation: `validate()` detects an edited block but not a complete consistent rewrite of the file | Medium | Accepted. See section 2.6 |
 | F11 | Time-of-day policy time zone | Low | Mitigated: `IDP_TIMEZONE` sets the zone (UTC in the Docker stack); allowed hours are evaluated in that zone |
 | F12 | Redis Bloom filter has a 0.1% false-positive rate: a valid token may be rejected and the user signs in again | Low | Accepted and documented |
-| F13 | WebAuthn ceremony attacks (for example, a replayed assertion) are not part of the penetration suite | Low | Open. Add tests |
+| F13 | WebAuthn ceremony attacks | Low | Mitigated. Replay, stale sign counter, wrong challenge, wrong origin, another DID's passkey and a missing DID proof are tested in `tests/test_passkeys.py`; forged signature, ceremony-type confusion, ceremony reuse across registration and login, authorization-request reuse and the user-verification policy are tested in `tests/test_pentest_webauthn.py` |
 | F14 | Production TLS and HSTS are untested against a live domain | Low | Open. Verify when a domain is available |
 | F15 | Rate limits are keyed by client address, so someone sharing a resource server's address could exhaust its introspection allowance (a lockout, not a bypass) | Low | Open. Key introspection limits by authenticated caller, or exempt trusted internal addresses |
 

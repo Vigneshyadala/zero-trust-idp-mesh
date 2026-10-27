@@ -123,12 +123,12 @@ backing up.
 | Revocation, Redis store, `/revoke` | 15 (one live-Redis test skipped) |
 | Audit log and its wiring | 10 |
 | Admin dashboard | 8 |
-| Penetration tests | 29 |
+| Penetration tests | 36 |
 | Rate limiting | 13 |
 | Token introspection | 8 |
 | Policy time zone | 6 |
 | User verification | 5 |
-| **Total** | **154 collected: 153 passed, 1 skipped** |
+| **Total** | **161 collected: 160 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

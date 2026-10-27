@@ -11,10 +11,10 @@ test plays the attacker; a passing test means the attack failed. The suite runs
 in-process against the real application. Output is saved in
 `docs/pentest-results.txt` and can be reproduced with:
 
-    python -m pytest tests/test_pentest.py -v
+    python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py -v
 
-Result at the time of writing: 18 attack tests, all resisted. The full suite
-has 142 passing tests and 1 skipped (the live-Redis test, which runs only when
+Result at the time of writing: 29 attack tests, all resisted. The full suite
+has 153 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -39,6 +39,17 @@ has 142 passing tests and 1 skipped (the live-Redis test, which runs only when
 | 16 | Interception | Code redeemed against a different `redirect_uri` | Refused |
 | 17 | Flow abuse | Token request from an unknown client | Refused (HTTP 401) |
 | 18 | Leakage | Token response caching | `Cache-Control: no-store` present |
+| 19 | Introspection | Call `/introspect` without the key or with a wrong key | Refused (HTTP 401), no token data returned |
+| 20 | Introspection | Unsigned `alg: none` token | Reported inactive |
+| 21 | Introspection | HS256 token signed with the public key | Reported inactive |
+| 22 | Introspection | Token signed with an attacker's key | Reported inactive |
+| 23 | Introspection | Valid token with an edited payload | Reported inactive |
+| 24 | Introspection | Token claiming a different issuer | Reported inactive |
+| 25 | Introspection | An ID token presented as an access token | Reported inactive |
+| 26 | Introspection | Probe why a token is inactive (revoked, expired, garbage, empty) | Identical `{"active": false}` answers |
+| 27 | Rate limiting | Guess the introspection key | HTTP 429 after the limit, including for the right key until the window passes |
+| 28 | Rate limiting | Brute-force authorization codes at `/token` | HTTP 400 up to the limit, then 429; blocked attempts audited |
+| 29 | Rate limiting | Exceed the limit while holding a real code | Refused with 429; the code is not consumed |
 
 ## 3.3 Man-in-the-middle
 
@@ -74,6 +85,7 @@ Severity is the author's assessment for a production deployment.
 | F12 | Redis Bloom filter has a 0.1% false-positive rate: a valid token may be rejected and the user signs in again | Low | Accepted and documented |
 | F13 | WebAuthn ceremony attacks (for example, a replayed assertion) are not part of the penetration suite | Low | Open. Add tests |
 | F14 | Production TLS and HSTS are untested against a live domain | Low | Open. Verify when a domain is available |
+| F15 | Rate limits are keyed by client address, so someone sharing a resource server's address could exhaust its introspection allowance (a lockout, not a bypass) | Low | Open. Key introspection limits by authenticated caller, or exempt trusted internal addresses |
 
 ## 3.5 Controls verified
 

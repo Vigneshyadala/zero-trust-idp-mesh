@@ -22,8 +22,7 @@ healthy. Traefik reads its routes from files, so it needs no access to the
 Docker socket. Named volumes hold the signing key (`idp-keys`), passkeys, ledger
 and audit file (`idp-data`) and Redis data (`redis-data`).
 
-Configuration is by environment variables (listed in the README). Secrets such
-as `IDP_ADMIN_KEY` live in `.env`, which is git-ignored.
+Configuration is by environment variables (listed in the README). Secrets such as `IDP_ADMIN_KEY` and `REDIS_PASSWORD` live in `.env`, which is git-ignored.
 
 ## 4.3 Local run with HTTPS
 
@@ -60,7 +59,7 @@ Verified results of this setup:
 Steps to deploy, on a server with a public domain whose DNS points to it and
 ports 80 and 443 open:
 
-1. Put `IDP_ADMIN_KEY`, `IDP_DOMAIN` and `ACME_EMAIL` in `.env`.
+1. Put `IDP_ADMIN_KEY`, `REDIS_PASSWORD`, `IDP_DOMAIN` and `ACME_EMAIL` in `.env`.
 2. Replace `idp.example.com` in `deploy/traefik/prod-routes.yml` with the domain.
 3. Test first against the Let's Encrypt staging server by adding
    `--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory`

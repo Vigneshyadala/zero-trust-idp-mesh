@@ -97,7 +97,9 @@ the final report in `docs/report/` are done.
 - Behind a proxy, the app trusts forwarded client addresses from any source
   (`--forwarded-allow-ips=*`). This is acceptable only because the app is
   reachable solely through Traefik on a private network.
-- Redis has no password and is reachable only from the internal Docker network.
+- Redis requires a password in the compose stack (`REDIS_PASSWORD` in `.env`) and is
+  reachable only from the internal Docker network. There is no TLS between the
+  app and Redis.
 - All commits are signed (SSH signing).
 
 ## Configuration
@@ -110,6 +112,7 @@ the final report in `docs/report/` are done.
 | `IDP_REQUIRE_UV` | Require WebAuthn user verification | `1` |
 | `IDP_DEV_LOGIN` | Development-only login (never in production) | `0` |
 | `IDP_REDIS_URL` | Use the Redis Bloom revocation store | unset (in-memory) |
+| `REDIS_PASSWORD` | Docker compose only: Redis password, required by the compose stack | none; set it in `.env` |
 | `IDP_BLOCKED_NETWORKS` | Comma-separated CIDRs the policy engine blocks | none |
 | `IDP_ALLOWED_HOURS` | Allowed hours, `start-end`, in the policy time zone | `6-22` |
 | `IDP_TIMEZONE` | Policy time zone, an IANA name such as `Asia/Kolkata`; unknown names fall back to UTC | server local time (`UTC` in Docker) |
@@ -136,6 +139,7 @@ Interactive API docs: http://127.0.0.1:8000/docs
 
     python scripts/gen_dev_cert.py
     echo "IDP_ADMIN_KEY=choose-a-long-random-value" > .env
+    echo "REDIS_PASSWORD=choose-another-long-random-value" >> .env
     docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
 
 The service is then at https://localhost:8443 (self-signed certificate, so the

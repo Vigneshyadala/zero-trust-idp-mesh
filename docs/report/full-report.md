@@ -340,7 +340,7 @@ Severity is the author's assessment for a production deployment.
 | F6 | Audit log is an in-memory buffer of 1000 events; the optional file is not tamper-evident | Medium | Open. Hash-chain the file or ship it off-host |
 | F7 | Authorization codes live in process memory, so the service is single-instance | Low | Accepted for this scope. Move to Redis to scale out |
 | F8 | The app trusts forwarded client addresses from any source (`--forwarded-allow-ips=*`) | Low | Mitigated: the app is reachable only through Traefik on a private network |
-| F9 | Redis has no password or TLS and relies on network isolation | Low | Mitigated by isolation. Add auth for production |
+| F9 | Redis traffic is not encrypted | Low | Partly mitigated: the compose stack requires a password (`REDIS_PASSWORD`, set with `--requirepass`) and Redis is reachable only on the private Docker network. There is still no TLS between the app and Redis |
 | F10 | The ledger is a simulation: `validate()` detects an edited block but not a complete consistent rewrite of the file | Medium | Accepted. See section 2.6 |
 | F11 | Time-of-day policy time zone | Low | Mitigated: `IDP_TIMEZONE` sets the zone (UTC in the Docker stack); allowed hours are evaluated in that zone |
 | F12 | Redis Bloom filter has a 0.1% false-positive rate: a valid token may be rejected and the user signs in again | Low | Accepted and documented |
@@ -371,7 +371,7 @@ Severity is the author's assessment for a production deployment.
 3. Track known devices and feed that fact into the policy engine (F3).
 4. Replace the shared admin key with DID and passkey authentication (F5).
 5. Make the audit log tamper-evident and durable (F6).
-6. Add a password to Redis (F9) and run the production TLS configuration
+6. Add TLS between the app and Redis (F9) and run the production TLS configuration
    against a real domain (F14).# 4. Deployment, Operations and Conclusion
 
 ## 4.1 Container image
@@ -396,8 +396,7 @@ healthy. Traefik reads its routes from files, so it needs no access to the
 Docker socket. Named volumes hold the signing key (`idp-keys`), passkeys, ledger
 and audit file (`idp-data`) and Redis data (`redis-data`).
 
-Configuration is by environment variables (listed in the README). Secrets such
-as `IDP_ADMIN_KEY` live in `.env`, which is git-ignored.
+Configuration is by environment variables (listed in the README). Secrets such as `IDP_ADMIN_KEY` and `REDIS_PASSWORD` live in `.env`, which is git-ignored.
 
 ## 4.3 Local run with HTTPS
 
@@ -434,7 +433,7 @@ Verified results of this setup:
 Steps to deploy, on a server with a public domain whose DNS points to it and
 ports 80 and 443 open:
 
-1. Put `IDP_ADMIN_KEY`, `IDP_DOMAIN` and `ACME_EMAIL` in `.env`.
+1. Put `IDP_ADMIN_KEY`, `REDIS_PASSWORD`, `IDP_DOMAIN` and `ACME_EMAIL` in `.env`.
 2. Replace `idp.example.com` in `deploy/traefik/prod-routes.yml` with the domain.
 3. Test first against the Let's Encrypt staging server by adding
    `--certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory`

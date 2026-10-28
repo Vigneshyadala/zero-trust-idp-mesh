@@ -1,6 +1,6 @@
 # Production override. Usage:
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-# Requires in .env: IDP_ADMIN_KEY, IDP_DOMAIN, ACME_EMAIL
+# Requires in .env: IDP_ADMIN_KEY, REDIS_PASSWORD, IDP_DOMAIN, ACME_EMAIL
 services:
   app:
     environment:

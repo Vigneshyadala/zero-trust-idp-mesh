@@ -20,6 +20,9 @@ check, and every issued token can be revoked individually.
 | Passkeys | `app/passkeys/` | WebAuthn registration and login, credential store |
 | Policy engine | `app/policy/` | Risk scoring and the allow or deny decision at `/token` |
 | Revocation | `app/revocation/` | `/revoke`, revocation stores (in-memory, Redis Bloom filter) |
+| Introspection | `app/introspection/` | RFC 7662-style `POST /introspect`, key-protected, so resource servers can honour revocation |
+| Rate limiting | `app/ratelimit/` | Per-client sliding-window limits on `/token`, `/revoke`, `/introspect` and the admin API |
+| Login page | `app/web/` | Browser page for DID creation, passkey registration and sign-in |
 | Audit log | `app/audit/` | Records issued, denied and revoked events |
 | Admin dashboard | `app/admin/` | Key-protected read-only view of the audit log |
 | Reverse proxy | `deploy/traefik/` | TLS termination, HTTP to HTTPS redirect, security headers |
@@ -102,6 +105,14 @@ sequenceDiagram
   subject, client, address and a small detail object.
 - **Least privilege at runtime.** Non-root container, secrets outside the
   image, `.env` and certificate keys excluded from Git.
+- **Resource servers ask the IdP instead of guessing.** `POST /introspect` returns
+  `{"active": false}` for anything unsigned, forged, expired, revoked or issued for
+  another audience, with identical answers so the reason is not revealed.
+- **Sensitive endpoints are rate limited.** Requests to `/token`, `/revoke`,
+  `/introspect` and the admin API are counted per client address; excess requests
+  get HTTP 429 with `Retry-After` and are written to the audit log. A request
+  refused with 429 never reaches the handler, so it cannot consume an authorization
+  code.
 
 ## 1.7 Scope and simulation notes
 

@@ -169,6 +169,8 @@ browser shows a warning) and http://localhost:8000 redirects to it. Stop with:
     app/passkeys/    WebAuthn registration and login, credential store
     app/policy/      zero-trust risk scoring and enforcement
     app/revocation/  token revocation (in-memory and Redis Bloom filter)
+    app/introspection/  token introspection for resource servers (RFC 7662 style)
+    app/ratelimit/      per-client rate limiting
     app/audit/       audit log of authentication events
     app/admin/       admin API and dashboard page
     app/web/         HTML, CSS and JavaScript pages

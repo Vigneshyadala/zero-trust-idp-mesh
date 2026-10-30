@@ -8,6 +8,7 @@ from app.passkeys.router import router as passkeys_router
 from app.admin.router import router as admin_router
 from app.introspection.router import router as introspection_router
 from app.revocation.router import router as revocation_router
+from app.home.router import router as home_router
 
 app = FastAPI(title="Zero-Trust IdP Mesh")
 app.add_middleware(RateLimitMiddleware)
@@ -18,6 +19,7 @@ app.include_router(passkeys_router)
 app.include_router(revocation_router)
 app.include_router(admin_router)
 app.include_router(introspection_router)
+app.include_router(home_router)
 
 
 @app.get("/health")

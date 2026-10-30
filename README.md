@@ -133,6 +133,10 @@ Run the tests:
 
     python -m pytest -v
 
+Check that the docs, counts and tracked files are consistent (changes nothing):
+
+    python scripts/release_check.py
+
 Interactive API docs: http://127.0.0.1:8000/docs
 
 ## Run with Docker (app, Redis, Traefik, local HTTPS)

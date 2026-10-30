@@ -1,0 +1,32 @@
+:root{--bg:#070a16;--panel:#0d1226;--line:#252c4a;--text:#e8eaf5;--dim:#909bbf;--ind:#818cf8;--vio:#a78bfa}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1000px;margin:0 auto;padding:0 1.5rem}
+nav{border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
+.brand{font:600 15px ui-monospace,Consolas,monospace;color:var(--ind)}
+.brand span{color:var(--dim)}
+nav ul{display:flex;gap:1.5rem;list-style:none;padding:0;color:var(--dim);font-size:14px}
+nav a:hover,nav a:focus-visible{color:var(--ind)}
+.hero{padding:5rem 0 3.5rem}
+.kicker{font:13px ui-monospace,Consolas,monospace;color:var(--ind);letter-spacing:.1em}
+h1{font-size:clamp(2rem,5vw,3.25rem);line-height:1.15;margin:.75rem 0 1rem;max-width:20ch}
+.grad{background:linear-gradient(90deg,var(--ind),var(--vio));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--dim);max-width:60ch}
+.actions{display:flex;gap:.75rem;flex-wrap:wrap;margin:1.75rem 0 .75rem}
+.btn{padding:.7rem 1.4rem;border:1px solid var(--line);border-radius:8px;font-weight:500}
+.btn:hover,.btn:focus-visible{border-color:var(--ind);color:var(--ind)}
+.btn.primary{background:linear-gradient(90deg,#6366f1,var(--vio));border-color:transparent;color:#fff}
+.btn.primary:hover{filter:brightness(1.1);color:#fff}
+.note{color:var(--dim);font-size:.85rem}
+section{padding:2.5rem 0}
+h2{font-size:1.6rem;margin-bottom:1.25rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:1.25rem}
+.card:hover{border-color:#6366f1}
+.card b{font:600 13px ui-monospace,Consolas,monospace;color:var(--ind)}
+.card h3{font-size:1.05rem;margin:.25rem 0 .4rem}
+.card p{color:var(--dim);font-size:.92rem}
+footer{border-top:1px solid var(--line);margin-top:2rem;padding:1.5rem 0;color:var(--dim);font-size:.85rem}
+a:focus-visible{outline:2px solid var(--ind);outline-offset:3px}

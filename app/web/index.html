@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zero-Trust IdP Mesh</title>
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <nav><div class="wrap">
+    <a class="brand" href="/">zero-trust<span>.idp</span></a>
+    <ul>
+      <li><a href="/docs">API docs</a></li>
+      <li><a href="/admin">Admin</a></li>
+      <li><a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh">GitHub</a></li>
+    </ul>
+  </div></nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <p class="kicker">DIDS &middot; PASSKEYS &middot; ZERO TRUST</p>
+      <h1>Identity without passwords, <span class="grad">trust without assumptions.</span></h1>
+      <p class="lead">An OpenID Connect provider where users prove themselves with a passkey bound to a decentralized identifier, and every token passes a policy check first.</p>
+      <p class="actions">
+        <a class="btn primary" href="/authorize?response_type=code&amp;client_id=demo-client&amp;redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&amp;scope=openid&amp;state=abc&amp;nonce=n1&amp;code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&amp;code_challenge_method=S256">Try the sign-in flow</a>
+        <a class="btn" href="/.well-known/openid-configuration">OIDC discovery</a>
+      </p>
+      <p class="note">After signing in, your browser is sent to a callback address with nothing listening. That is expected; the code is in the address bar.</p>
+    </header>
+
+    <section>
+      <h2>How a sign-in works</h2>
+      <div class="grid">
+        <div class="card"><b>01</b><h3>Create a DID</h3><p>Your browser generates an Ed25519 key. The private key never leaves it.</p></div>
+        <div class="card"><b>02</b><h3>Register a passkey</h3><p>Windows Hello, a phone or a security key, bound to your DID by a signed proof.</p></div>
+        <div class="card"><b>03</b><h3>Sign in with PKCE</h3><p>One-use codes that expire in 60 seconds and are useless without the verifier.</p></div>
+        <div class="card"><b>04</b><h3>Get signed tokens</h3><p>EdDSA tokens, issued only after the zero-trust policy allows it.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>What is inside</h2>
+      <div class="grid">
+        <div class="card"><h3>Ledger anchoring</h3><p>DID documents anchored in a hash-chained ledger you can validate.</p></div>
+        <div class="card"><h3>Policy engine</h3><p>Risk signals are scored before any token is issued.</p></div>
+        <div class="card"><h3>Revocation</h3><p>Single tokens revoked through a Redis Bloom filter that fails closed.</p></div>
+        <div class="card"><h3>Introspection</h3><p>Resource servers ask whether a token is still active.</p></div>
+        <div class="card"><h3>Audit log</h3><p>Issued, denied and revoked events on a key-protected dashboard.</p></div>
+        <div class="card"><h3>Tested by attack</h3><p>36 penetration tests: replay, forgery, PKCE abuse and more.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">Zero-Trust IdP Mesh &middot; v1.1 &middot; built with Python and FastAPI</div></footer>
+</body>
+</html>

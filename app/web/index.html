@@ -26,6 +26,12 @@
         <a class="btn" href="/.well-known/openid-configuration">OIDC discovery</a>
       </p>
       <p class="note">After signing in, your browser is sent to a callback address with nothing listening. That is expected; the code is in the address bar.</p>
+      <ul class="status" aria-label="Live service status">
+        <li id="st-service"><span>Service</span><span class="v">checking</span></li>
+        <li id="st-issuer"><span>Issuer</span><span class="v">checking</span></li>
+        <li id="st-ledger"><span>Ledger</span><span class="v">checking</span></li>
+        <li id="st-key"><span>Signing key</span><span class="v">checking</span></li>
+      </ul>
     </header>
 
     <section>
@@ -52,5 +58,6 @@
   </main>
 
   <footer><div class="wrap">Zero-Trust IdP Mesh &middot; v1.1 &middot; built with Python and FastAPI</div></footer>
+  <script src="/assets/status.js" defer></script>
 </body>
 </html>

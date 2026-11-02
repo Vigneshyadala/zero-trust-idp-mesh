@@ -23,6 +23,7 @@ check, and every issued token can be revoked individually.
 | Introspection | `app/introspection/` | RFC 7662-style `POST /introspect`, key-protected, so resource servers can honour revocation |
 | Rate limiting | `app/ratelimit/` | Per-client sliding-window limits on `/token`, `/revoke`, `/introspect` and the admin API |
 | Login page | `app/web/` | Browser page for DID creation, passkey registration and sign-in |
+| Landing page | `app/home/` | The `/` front page, its stylesheet and a status script that shows live service, issuer, ledger and signing-key state using same-origin requests only |
 | Audit log | `app/audit/` | Records issued, denied and revoked events |
 | Admin dashboard | `app/admin/` | Key-protected read-only view of the audit log |
 | Reverse proxy | `deploy/traefik/` | TLS termination, HTTP to HTTPS redirect, security headers |
@@ -279,7 +280,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py tests/test_pentest_webauthn.py -v
 
 Result at the time of writing: 36 attack tests, all resisted. The full suite
-has 160 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 171 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -512,7 +513,9 @@ backing up.
 | Token introspection | 8 |
 | Policy time zone | 6 |
 | User verification | 5 |
-| **Total** | **161 collected: 160 passed, 1 skipped** |
+| Landing page | 6 |
+| Landing status strip | 5 |
+| **Total** | **172 collected: 171 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

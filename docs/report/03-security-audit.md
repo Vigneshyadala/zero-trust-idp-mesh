@@ -14,7 +14,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py tests/test_pentest_webauthn.py -v
 
 Result at the time of writing: 36 attack tests, all resisted. The full suite
-has 160 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 171 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results

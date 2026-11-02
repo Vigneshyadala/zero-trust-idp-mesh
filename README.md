@@ -78,7 +78,7 @@ the final report in `docs/report/` are done.
   automatic renewal, HSTS and a hostname rule. Validated, not run live.
 - Final report in `docs/report/`: architecture, cryptographic workflows,
   security audit, deployment and conclusion.
-- 160 automated tests passing (1 skipped: the live-Redis test, which runs only
+- 171 automated tests passing (1 skipped: the live-Redis test, which runs only
   when `IDP_REDIS_URL` is set).
 
 ## Security notes
@@ -175,6 +175,7 @@ browser shows a warning) and http://localhost:8000 redirects to it. Stop with:
     app/revocation/  token revocation (in-memory and Redis Bloom filter)
     app/introspection/  token introspection for resource servers (RFC 7662 style)
     app/ratelimit/      per-client rate limiting
+    app/home/           landing page (/) with a live status strip
     app/audit/       audit log of authentication events
     app/admin/       admin API and dashboard page
     app/web/         HTML, CSS and JavaScript pages

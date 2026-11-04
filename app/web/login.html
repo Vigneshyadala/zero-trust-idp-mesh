@@ -4,12 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Zero-Trust IdP - Passkey sign-in</title>
+  <link rel="stylesheet" href="/assets/site.css">
   <link rel="stylesheet" href="/static/passkeys.css">
 </head>
 <body>
-  <main>
+  <nav><div class="wrap">
+    <a class="brand" href="/">zero-trust<span>.idp</span></a>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/docs">API docs</a></li>
+      <li><a href="/admin">Admin</a></li>
+    </ul>
+  </div></nav>
+
+  <main class="login">
+    <p class="kicker">PASSKEY SIGN-IN</p>
     <h1>Zero-Trust IdP Mesh</h1>
     <p class="muted">Passwordless sign-in with a DID and a passkey (WebAuthn).</p>
+    <ol class="steps" aria-hidden="true"><li>DID</li><li>Passkey</li><li>Sign in</li></ol>
 
     <section>
       <h2>1. Your identity (DID)</h2>
@@ -33,12 +45,13 @@
 
     <section id="no-request" hidden>
       <h2>3. Sign in</h2>
-      <p class="muted">No sign-in request is in progress. Start one from the application, or open the
-      <code>/authorize</code> URL from the README.</p>
+      <p class="muted">No sign-in request is in progress. Start one from the application, or open the <code>/authorize</code> URL from the README.</p>
     </section>
 
     <pre id="log" aria-live="polite"></pre>
   </main>
+
+  <footer><div class="wrap">Private keys never leave your browser or your authenticator.</div></footer>
   <script src="/static/passkeys.js"></script>
 </body>
 </html>

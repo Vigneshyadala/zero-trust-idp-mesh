@@ -164,6 +164,20 @@ browser shows a warning) and http://localhost:8000 redirects to it. Stop with:
    listens on port 8080, so the page will not load. That is expected: copy the
    code from the address bar and exchange it at `/token` within 60 seconds.
 
+## Screenshots
+
+Landing page:
+
+![Landing page](docs/screenshots/home.png)
+
+What is inside:
+
+![Feature overview](docs/screenshots/features.png)
+
+Admin audit dashboard, unlocked with the admin key and showing denied token requests:
+
+![Admin dashboard](docs/screenshots/admin.png)
+
 ## Project layout
 
     app/core/        settings and JWT signing

@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from fastapi.responses import FileResponse, JSONResponse
 
 from app.audit.log import get_audit
+from app.passkeys.router import PAGE_HEADERS
 
 router = APIRouter(prefix="/admin")
 PAGE = Path(__file__).resolve().parent.parent / "web" / "admin.html"
@@ -30,7 +31,7 @@ def require_admin(x_admin_key: str | None = Header(None)) -> None:
 
 @router.get("")
 def page():
-    return FileResponse(PAGE, media_type="text/html", headers=NO_STORE)
+    return FileResponse(PAGE, media_type="text/html", headers={**PAGE_HEADERS, **NO_STORE})
 
 
 @router.get("/api/events", dependencies=[Depends(require_admin)])

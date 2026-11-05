@@ -1,0 +1,28 @@
+.admin{max-width:1000px;margin:0 auto;padding:3rem 1.5rem 2rem}
+.admin h1{font-size:clamp(1.8rem,4vw,2.4rem);line-height:1.15;margin:.5rem 0;max-width:none}
+.admin .muted{color:var(--dim);font-size:.92rem}
+.admin .bar{display:flex;gap:.6rem;flex-wrap:wrap;margin:1.5rem 0 .5rem}
+.admin input,.admin select{padding:.6rem .75rem;background:#0a0e20;color:var(--text);border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.95rem}
+.admin input{flex:1;min-width:200px}
+.admin input:focus-visible,.admin select:focus-visible{outline:2px solid var(--ind);outline-offset:2px;border-color:var(--ind)}
+.admin button{padding:.6rem 1.25rem;border:0;border-radius:8px;background:linear-gradient(90deg,#6366f1,var(--vio));color:#fff;font-family:inherit;font-weight:600;font-size:.95rem;cursor:pointer}
+.admin button:hover{filter:brightness(1.1)}
+.admin button:focus-visible{outline:2px solid var(--vio);outline-offset:3px}
+.admin button.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.admin .msg{color:#f87171;min-height:1.5rem;margin:.25rem 0}
+.admin .cards{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin:1rem 0 1.5rem}
+.admin .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;display:flex;flex-direction:column}
+.admin .card b{font-size:1.6rem;line-height:1.2}
+.admin .card span{font:12px ui-monospace,Consolas,monospace;color:var(--dim);word-break:break-all}
+.admin .empty{color:var(--dim)}
+.admin .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.admin table{width:100%;border-collapse:collapse;font-size:.88rem}
+.admin th{text-align:left;font:12px ui-monospace,Consolas,monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;padding:.6rem .75rem;border-bottom:1px solid var(--line)}
+.admin td{padding:.5rem .75rem;border-bottom:1px solid #161c36;word-break:break-all;vertical-align:top}
+.admin td.mono{font:12px ui-monospace,Consolas,monospace;color:var(--dim)}
+.admin tr:last-child td{border-bottom:0}
+.admin .badge{display:inline-block;padding:.1rem .55rem;border-radius:999px;font-size:.78rem;font-weight:600;border:1px solid var(--line)}
+.admin .badge.success{color:#34d399;border-color:#1d6b52}
+.admin .badge.blocked{color:#f87171;border-color:#7a2b2b}
+.admin .badge.error{color:#fbbf24;border-color:#7a5a12}
+.admin .badge.other{color:var(--dim)}

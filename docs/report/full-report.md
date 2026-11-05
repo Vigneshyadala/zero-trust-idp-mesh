@@ -280,7 +280,7 @@ in-process against the real application. Output is saved in
     python -m pytest tests/test_pentest.py tests/test_pentest_endpoints.py tests/test_pentest_webauthn.py -v
 
 Result at the time of writing: 36 attack tests, all resisted. The full suite
-has 177 passing tests and 1 skipped (the live-Redis test, which runs only when
+has 182 passing tests and 1 skipped (the live-Redis test, which runs only when
 `IDP_REDIS_URL` is set).
 
 ## 3.2 Threat results
@@ -374,7 +374,8 @@ Severity is the author's assessment for a production deployment.
   `.env`, and certificate keys.
 - Container runs as a non-root user and only the proxy publishes ports.
 - The admin dashboard is disabled unless `IDP_ADMIN_KEY` is set, and it renders
-  event data with `textContent`, so log content cannot inject script.
+  event data with `textContent`, so log content cannot inject script. The page is served with the same content-security policy as the
+  sign-in page, with no inline script, and the key is held only in page memory.
 
 ## 3.6 Recommended next steps
 
@@ -516,7 +517,8 @@ backing up.
 | Landing page | 6 |
 | Landing status strip | 5 |
 | Login page restyle | 6 |
-| **Total** | **178 collected: 177 passed, 1 skipped** |
+| Admin page restyle | 5 |
+| **Total** | **183 collected: 182 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

@@ -130,7 +130,8 @@ backing up.
 | Landing page | 6 |
 | Landing status strip | 5 |
 | Login page restyle | 6 |
-| **Total** | **178 collected: 177 passed, 1 skipped** |
+| Admin page restyle | 5 |
+| **Total** | **183 collected: 182 passed, 1 skipped** |
 
 The skipped test exercises a live Redis and runs when `IDP_REDIS_URL` is set. The
 Redis store is otherwise covered by tests against a fake client.

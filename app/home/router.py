@@ -4,7 +4,12 @@ from fastapi.responses import FileResponse
 from app.passkeys.router import PAGE_HEADERS, WEB_DIR
 
 router = APIRouter()
-ASSETS = {"site.css": "text/css", "status.js": "text/javascript"}
+ASSETS = {
+    "site.css": "text/css",
+    "status.js": "text/javascript",
+    "admin.css": "text/css",
+    "admin.js": "text/javascript",
+}
 
 
 @router.get("/", include_in_schema=False)

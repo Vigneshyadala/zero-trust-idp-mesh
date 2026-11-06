@@ -198,6 +198,14 @@ Admin audit dashboard, unlocked with the admin key and showing denied token requ
     tests/           pytest suite, including the penetration tests
     docs/            test evidence and reports
 
+## Troubleshooting
+
+**`[WinError 10013]` when starting the server on Windows.** Windows can reserve whole blocks of ports (Hyper-V, WSL and Docker often do), and port 8000 may fall inside one. List the reserved ranges in Git Bash:
+
+Pick any port outside every listed range, for example 9123, and start the server there:
+
+If you sign in with passkeys or check tokens on a non-default port, set `IDP_ISSUER` and `IDP_RP_ORIGIN` to the same address, for example `http://localhost:9123`, so the issuer and WebAuthn origin match the address in the browser.
+
 ## Branching
 
 Feature branches (`feat/...`, `docs/...`, `fix/...`) merged into `main` with

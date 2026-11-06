@@ -36,3 +36,14 @@ a:focus-visible{outline:2px solid var(--ind);outline-offset:3px}.status{list-sty
 .status li::before{content:"";position:absolute;top:.9rem;right:1rem;width:8px;height:8px;border-radius:50%;background:var(--dim)}
 .status li.ok::before{background:#34d399}
 .status li.bad::before{background:#f87171}
+
+.brandmark{display:flex;align-items:center;gap:.75rem}
+.brandmark .vy,.credit .vy{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#fb923c);color:#fff;font:700 15px system-ui,sans-serif;letter-spacing:.02em;box-shadow:0 0 24px rgba(129,140,248,.35)}
+.brandmark .bt{display:flex;flex-direction:column;line-height:1.15}
+.brandmark .bt b{font-size:1rem}
+.brandmark .bt small{font:11px ui-monospace,Consolas,monospace;color:var(--ind);letter-spacing:.14em}
+.credit{display:flex;align-items:center;justify-content:center;gap:1rem;padding:3rem 1.5rem 2rem}
+.credit .vy{width:64px;height:64px;border-radius:18px;font-size:22px}
+.credit small{display:block;font:11px ui-monospace,Consolas,monospace;color:var(--dim);letter-spacing:.16em}
+.credit strong{font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.15;background:linear-gradient(90deg,var(--ind),#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (max-width:560px){.brandmark .bt small{display:none}}

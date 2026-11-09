@@ -164,6 +164,38 @@ browser shows a warning) and http://localhost:8000 redirects to it. Stop with:
    listens on port 8080, so the page will not load. That is expected: copy the
    code from the address bar and exchange it at `/token` within 60 seconds.
 
+## Demo: end-to-end sign-in and replay test
+
+A manual end-to-end check that takes about three minutes. Any free port works; 9123 is used here (see Troubleshooting if port 8000 is blocked on Windows).
+
+1. Start the server:
+
+```
+IDP_ADMIN_KEY=localtest IDP_ISSUER=http://localhost:9123 IDP_RP_ORIGIN=http://localhost:9123 uvicorn app.main:app --port 9123
+```
+
+2. Open this link in Chrome:
+
+```
+http://localhost:9123/authorize?response_type=code&client_id=demo-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=openid&state=abc&nonce=n1&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256
+```
+
+3. Create an identity, register a passkey and sign in. Chrome ends on localhost:8080/callback?code=..., which will not load. Copy the value after code= and before &state.
+
+4. Within 60 seconds, exchange the code for tokens. The verifier matches the code challenge in the link (it is the sample from RFC 7636):
+
+```
+curl -s -X POST http://localhost:9123/token -d grant_type=authorization_code -d code=PASTE_CODE_HERE -d redirect_uri=http://localhost:8080/callback -d client_id=demo-client -d code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+```
+
+Expected: JSON with an access_token, an id_token, token_type Bearer and expires_in 3600.
+
+5. Replay test: run the same command again. Expected: an invalid_grant error, because an authorization code works only once.
+
+6. Open http://localhost:9123/admin, enter the key localtest and click Load. Expected: one token_issued success row and one token_denied error row for the replay.
+
+The key localtest is for local testing only. Use your own value in any real deployment.
+
 ## Screenshots
 
 Landing page:
@@ -210,3 +242,7 @@ If you sign in with passkeys or check tokens on a non-default port, set `IDP_ISS
 
 Feature branches (`feat/...`, `docs/...`, `fix/...`) merged into `main` with
 `--no-ff`.
+
+## Credits
+
+Designed and built by Vignesh Yadala as Enterprise Project 3 of the Zaalima Development Pvt. Ltd. internship program.

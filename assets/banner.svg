@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="Zero-Trust IdP Mesh, engineered end-to-end by Vignesh Yadala">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070a16"/>
+      <stop offset="1" stop-color="#150f2b"/>
+    </linearGradient>
+    <linearGradient id="vy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#fb923c"/>
+    </linearGradient>
+    <linearGradient id="tt" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#c4b5fd"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="18" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1198" height="298" rx="17" fill="none" stroke="#252c4a" stroke-width="2"/>
+  <g fill="none" stroke="#818cf8" stroke-opacity="0.18" stroke-width="1.5">
+    <circle cx="1010" cy="150" r="46"/>
+    <circle cx="1010" cy="150" r="92"/>
+    <circle cx="1010" cy="150" r="138"/>
+    <line x1="1010" y1="12" x2="1010" y2="288"/>
+    <line x1="872" y1="150" x2="1148" y2="150"/>
+  </g>
+  <circle cx="1010" cy="150" r="10" fill="#a78bfa"/>
+  <circle cx="1056" cy="150" r="5" fill="#fb923c"/>
+  <circle cx="1010" cy="104" r="5" fill="#818cf8"/>
+  <circle cx="964" cy="150" r="5" fill="#818cf8"/>
+  <rect x="64" y="64" width="68" height="68" rx="16" fill="url(#vy)"/>
+  <text x="98" y="110" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="800" fill="#ffffff">VY</text>
+  <text x="152" y="92" font-family="Consolas, Menlo, monospace" font-size="15" letter-spacing="3" fill="#909bbf">ENGINEERED END-TO-END BY</text>
+  <text x="152" y="124" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" fill="#e8eaf5">Vignesh Yadala</text>
+  <text x="64" y="206" font-family="Segoe UI, Arial, sans-serif" font-size="60" font-weight="800" fill="url(#tt)">Zero-Trust IdP Mesh</text>
+  <text x="64" y="248" font-family="Segoe UI, Arial, sans-serif" font-size="23" fill="#909bbf">Passwordless, decentralized identity. No shared secrets to steal.</text>
+</svg>

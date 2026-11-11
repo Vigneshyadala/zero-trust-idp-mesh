@@ -9,7 +9,7 @@
 ![FastAPI](https://img.shields.io/badge/FASTAPI-0.143-009688?style=for-the-badge&logo=fastapi&logoColor=white&labelColor=1a1024)
 ![Docker](https://img.shields.io/badge/DOCKER-COMPOSE-2496ED?style=for-the-badge&logo=docker&logoColor=white&labelColor=1a1024)
 ![Redis](https://img.shields.io/badge/REDIS-BLOOM-ff3b5c?style=for-the-badge&logo=redis&logoColor=white&labelColor=1a1024)
-![Tests](https://img.shields.io/badge/TESTS-182%20PASSING-8b5cf6?style=for-the-badge&labelColor=1a1024)
+![Tests](https://img.shields.io/badge/TESTS-186%20PASSING-8b5cf6?style=for-the-badge&labelColor=1a1024)
 
 **[About](#-about) · [Features](#-features) · [Architecture](#-architecture) · [Quick start](#-quick-start) · [Demo](#-demo-sign-in-and-replay-test) · [Security](#-security) · [Developer](#-developer)**
 
@@ -99,7 +99,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Interactive API docs: http://127.0.0.1:8000/docs
+Interactive API docs: http://127.0.0.1:8000/docs. Health check: `/health`. Service version: `/version`.
 
 **Run the tests and the release check**
 
@@ -252,7 +252,7 @@ Project status by week:
 | 3 | Zero-trust policy engine, token revocation, admin dashboard | ✅ Complete |
 | 4 | Penetration tests, Docker + Traefik deployment, final report | ✅ Complete |
 
-The test suite has 182 automated tests passing (1 skipped: the live-Redis test, which runs only when `IDP_REDIS_URL` is set). Attack-test results are in `docs/pentest-results.txt` and the final report is in `docs/report/`.
+The test suite has 186 automated tests passing (1 skipped: the live-Redis test, which runs only when `IDP_REDIS_URL` is set). Attack-test results are in `docs/pentest-results.txt` and the final report is in `docs/report/`.
 
 ## 🩺 Troubleshooting
 

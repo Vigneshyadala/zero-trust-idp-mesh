@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.core.version import NAME, VERSION
 from app.ratelimit.middleware import RateLimitMiddleware
 
 from app.did.router import router as did_router
@@ -10,7 +11,7 @@ from app.introspection.router import router as introspection_router
 from app.revocation.router import router as revocation_router
 from app.home.router import router as home_router
 
-app = FastAPI(title="Zero-Trust IdP Mesh")
+app = FastAPI(title=NAME, version=VERSION)
 app.add_middleware(RateLimitMiddleware)
 app.include_router(oidc_router)
 app.include_router(did_router)
@@ -25,3 +26,8 @@ app.include_router(home_router)
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/version")
+def version():
+    return {"name": NAME, "version": VERSION}

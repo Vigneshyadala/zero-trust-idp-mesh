@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 
 client = TestClient(app)
-PAGE_IDS = {"key", "load", "lock", "outcome", "msg", "updated", "cards", "rows"}
+PAGE_IDS = {"key", "load", "lock", "export", "outcome", "msg", "updated", "cards", "rows"}
 
 
 def _ids(html):
@@ -54,5 +54,9 @@ def test_admin_script_never_writes_html_or_stores_the_key():
 def test_admin_script_talks_only_to_the_admin_api_on_the_same_origin():
     js = client.get("/assets/admin.js").text
     targets = set(re.findall(r'"(/admin/api/[^"]*)"', js))
-    assert targets == {"/admin/api/summary", "/admin/api/events?limit=100"}
+    assert targets == {
+        "/admin/api/summary",
+        "/admin/api/events?limit=100",
+        "/admin/api/events.csv?limit=500",
+    }
     assert not re.search(r"https?://", js)

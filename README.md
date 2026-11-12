@@ -9,7 +9,7 @@
 ![FastAPI](https://img.shields.io/badge/FASTAPI-0.143-009688?style=for-the-badge&logo=fastapi&logoColor=white&labelColor=1a1024)
 ![Docker](https://img.shields.io/badge/DOCKER-COMPOSE-2496ED?style=for-the-badge&logo=docker&logoColor=white&labelColor=1a1024)
 ![Redis](https://img.shields.io/badge/REDIS-BLOOM-ff3b5c?style=for-the-badge&logo=redis&logoColor=white&labelColor=1a1024)
-![Tests](https://img.shields.io/badge/TESTS-186%20PASSING-8b5cf6?style=for-the-badge&labelColor=1a1024)
+![Tests](https://img.shields.io/badge/TESTS-192%20PASSING-8b5cf6?style=for-the-badge&labelColor=1a1024)
 
 **[About](#-about) · [Features](#-features) · [Architecture](#-architecture) · [Quick start](#-quick-start) · [Demo](#-demo-sign-in-and-replay-test) · [Security](#-security) · [Developer](#-developer)**
 
@@ -35,7 +35,7 @@ There is no password to phish or leak. The user's DID private key is created in 
 | 🛡️ | **Zero-trust policy engine** | Risk score from IP blocklist, device and user-verification signals and time of day; high risk blocks issuance and burns the code |
 | 🚫 | **Token revocation** | `POST /revoke` (RFC 7009 style), in-memory or Redis Bloom filter store, fails closed if Redis is down |
 | 🔍 | **Introspection** | `POST /introspect` (RFC 7662 style) so resource servers see revocation immediately |
-| 📜 | **Audit log and admin dashboard** | Token issued, denied and revoked events, read-only dashboard behind an `X-Admin-Key` |
+| 📜 | **Audit log and admin dashboard** | Token issued, denied and revoked events, read-only dashboard behind an `X-Admin-Key`, with CSV export |
 | ⏱️ | **Rate limiting** | Per-client limits with HTTP 429 and `Retry-After`, blocked requests are audited |
 | 🧪 | **Penetration tests** | 36 attack tests: replay, `alg: none`, algorithm confusion, tampering, PKCE downgrade, redirect abuse and more |
 | 🐳 | **Deployment** | Non-root Docker image, compose stack with Redis and Traefik, local HTTPS, production TLS configuration |
@@ -152,18 +152,18 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml down
 
 ## 🎬 Demo: sign-in and replay test
 
-A manual end-to-end check that takes about three minutes. Any free port works; 9123 is used here (see [Troubleshooting](#-troubleshooting) if port 8000 is blocked on Windows).
+A manual end-to-end check that takes about three minutes. Any free port works; 23456 is used here (see [Troubleshooting](#-troubleshooting) if port 8000 is blocked on Windows).
 
 **1️⃣ Start the server**
 
 ```
-IDP_ADMIN_KEY=localtest IDP_ISSUER=http://localhost:9123 IDP_RP_ORIGIN=http://localhost:9123 uvicorn app.main:app --port 9123
+IDP_ADMIN_KEY=localtest IDP_ISSUER=http://localhost:23456 IDP_RP_ORIGIN=http://localhost:23456 uvicorn app.main:app --port 23456
 ```
 
 **2️⃣ Open this link in Chrome**
 
 ```
-http://localhost:9123/authorize?response_type=code&client_id=demo-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=openid&state=abc&nonce=n1&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256
+http://localhost:23456/authorize?response_type=code&client_id=demo-client&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback&scope=openid&state=abc&nonce=n1&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256
 ```
 
 **3️⃣ Sign in with a passkey.** Create an identity, register a passkey and sign in. Chrome ends on `localhost:8080/callback?code=...`, which will not load because nothing listens on port 8080. That is expected. Copy the value after `code=` and before `&state`.
@@ -171,14 +171,14 @@ http://localhost:9123/authorize?response_type=code&client_id=demo-client&redirec
 **4️⃣ Exchange the code within 60 seconds.** The verifier matches the code challenge in the link (it is the sample from RFC 7636):
 
 ```
-curl -s -X POST http://localhost:9123/token -d grant_type=authorization_code -d code=PASTE_CODE_HERE -d redirect_uri=http://localhost:8080/callback -d client_id=demo-client -d code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+curl -s -X POST http://localhost:23456/token -d grant_type=authorization_code -d code=PASTE_CODE_HERE -d redirect_uri=http://localhost:8080/callback -d client_id=demo-client -d code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
 ```
 
 Expected: JSON with an `access_token`, an `id_token`, `token_type` `Bearer` and `expires_in` 3600.
 
 **5️⃣ Replay test.** Run the same command again. Expected: an `invalid_grant` error, because an authorization code works only once.
 
-**6️⃣ Check the audit log.** Open http://localhost:9123/admin, enter the key `localtest` and click Load. Expected: one `token_issued` success row and one `token_denied` error row for the replay.
+**6️⃣ Check the audit log.** Open http://localhost:23456/admin, enter the key `localtest` and click Load. Expected: one `token_issued` success row and one `token_denied` error row for the replay.
 
 > The key `localtest` is for local testing only. Use your own value in any real deployment.
 
@@ -252,7 +252,7 @@ Project status by week:
 | 3 | Zero-trust policy engine, token revocation, admin dashboard | ✅ Complete |
 | 4 | Penetration tests, Docker + Traefik deployment, final report | ✅ Complete |
 
-The test suite has 186 automated tests passing (1 skipped: the live-Redis test, which runs only when `IDP_REDIS_URL` is set). Attack-test results are in `docs/pentest-results.txt` and the final report is in `docs/report/`.
+The test suite has 192 automated tests passing (1 skipped: the live-Redis test, which runs only when `IDP_REDIS_URL` is set). Attack-test results are in `docs/pentest-results.txt` and the final report is in `docs/report/`.
 
 ## 🩺 Troubleshooting
 
@@ -262,13 +262,13 @@ The test suite has 186 automated tests passing (1 skipped: the live-Redis test, 
 netsh interface ipv4 show excludedportrange protocol=tcp
 ```
 
-Pick any port outside every listed range, for example 9123, and start the server there:
+Pick any port outside every listed range, for example 23456, and start the server there:
 
 ```
-uvicorn app.main:app --port 9123
+uvicorn app.main:app --port 23456
 ```
 
-If you sign in with passkeys or check tokens on a non-default port, set `IDP_ISSUER` and `IDP_RP_ORIGIN` to the same address, for example `http://localhost:9123`, so the issuer and WebAuthn origin match the address in the browser.
+If you sign in with passkeys or check tokens on a non-default port, set `IDP_ISSUER` and `IDP_RP_ORIGIN` to the same address, for example `http://localhost:23456`, so the issuer and WebAuthn origin match the address in the browser.
 
 ## 🌿 Branching
 

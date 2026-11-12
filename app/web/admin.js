@@ -13,19 +13,43 @@
     return node;
   }
 
+  function check(r) {
+    if (!r.ok) {
+      throw new Error(
+        r.status === 401 ? "Invalid admin key"
+        : r.status === 503 ? "Admin disabled: set IDP_ADMIN_KEY on the server"
+        : r.status === 429 ? "Too many requests: wait a minute and try again"
+        : "Request failed (" + r.status + ")"
+      );
+    }
+    return r;
+  }
+
   function api(path) {
     return fetch(path, { headers: { "X-Admin-Key": key, Accept: "application/json" }, cache: "no-store" })
-      .then(function (r) {
-        if (!r.ok) {
-          throw new Error(
-            r.status === 401 ? "Invalid admin key"
-            : r.status === 503 ? "Admin disabled: set IDP_ADMIN_KEY on the server"
-            : r.status === 429 ? "Too many requests: wait a minute and try again"
-            : "Request failed (" + r.status + ")"
-          );
-        }
-        return r.json();
-      });
+      .then(check)
+      .then(function (r) { return r.json(); });
+  }
+
+  function download() {
+    if (!key) { $("msg").textContent = "Enter the admin key first"; return; }
+    $("msg").textContent = "";
+    var outcome = $("outcome").value;
+    var q = outcome ? "&outcome=" + encodeURIComponent(outcome) : "";
+    fetch("/admin/api/events.csv?limit=500" + q, { headers: { "X-Admin-Key": key }, cache: "no-store" })
+      .then(check)
+      .then(function (r) { return r.blob(); })
+      .then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var link = el("a");
+        link.href = url;
+        link.download = "audit-events.csv";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      })
+      .catch(function (err) { $("msg").textContent = err.message; });
   }
 
   function render(summary, events) {
@@ -91,5 +115,6 @@
     });
   });
   $("lock").addEventListener("click", lock);
+  $("export").addEventListener("click", download);
   $("outcome").addEventListener("change", function () { if (key) { refresh(); } });
 })();

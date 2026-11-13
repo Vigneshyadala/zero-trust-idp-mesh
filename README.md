@@ -23,6 +23,8 @@ A decentralized, zero-trust identity provider built with Python and FastAPI. It 
 
 There is no password to phish or leak. The user's DID private key is created in the browser and never leaves it, and every sign-in is checked by a zero-trust policy engine before a token is issued.
 
+New to the flow? Read [How it works](docs/how-it-works.md), a walkthrough with a sequence diagram.
+
 > Enterprise Project 3 of the Zaalima Development Pvt. Ltd. internship program.
 
 ## ✨ Features
@@ -150,6 +152,28 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml down
 
 </details>
 
+## 🔌 Endpoints
+
+| Method | Path | Purpose | Protection |
+|--------|------|---------|------------|
+| GET | `/.well-known/openid-configuration` | OIDC discovery document | public |
+| GET | `/jwks.json` | Public signing key (EdDSA) | public |
+| GET | `/authorize` | Start a sign-in | registered client and `redirect_uri`, PKCE S256 required |
+| GET | `/login` | Passkey login page | pending `request_id` |
+| POST | `/webauthn/register/options`, `/webauthn/register/verify` | Register a passkey for a DID | DID proof plus WebAuthn attestation |
+| POST | `/webauthn/login/options`, `/webauthn/login/verify` | Sign in with a passkey | WebAuthn assertion |
+| POST | `/token` | Exchange a code for tokens | one-time code, PKCE verifier, policy engine, rate limit |
+| POST | `/revoke` | Revoke a token | rate limit, always answers 200 |
+| POST | `/introspect` | Is this access token still active? | `X-Introspection-Key`, rate limit |
+| GET | `/did/{did}` | Resolve a `did:key` to its DID document | public |
+| POST | `/ledger/anchor` | Anchor a DID document on the simulated ledger | signature by the DID |
+| GET | `/ledger/chain` | Read the hash-chained ledger | public |
+| GET | `/admin` | Audit dashboard page | the data needs the admin key |
+| GET | `/admin/api/summary`, `/admin/api/events`, `/admin/api/events.csv` | Audit counts, events and CSV export | `X-Admin-Key`, rate limit |
+| GET | `/health`, `/version` | Liveness and version | public |
+
+A step-by-step walkthrough with a sequence diagram is in [docs/how-it-works.md](docs/how-it-works.md).
+
 ## 🎬 Demo: sign-in and replay test
 
 A manual end-to-end check that takes about three minutes. Any free port works; 23456 is used here (see [Troubleshooting](#-troubleshooting) if port 8000 is blocked on Windows).
@@ -178,7 +202,7 @@ Expected: JSON with an `access_token`, an `id_token`, `token_type` `Bearer` and 
 
 **5️⃣ Replay test.** Run the same command again. Expected: an `invalid_grant` error, because an authorization code works only once.
 
-**6️⃣ Check the audit log.** Open http://localhost:23456/admin, enter the key `localtest` and click Load. Expected: one `token_issued` success row and one `token_denied` error row for the replay.
+**6️⃣ Check the audit log.** Open http://localhost:23456/admin, enter the key `localtest` and click Load. Expected: one `token_issued` success row and one `token_denied` error row for the replay. Click **Download CSV** to save the events as `audit-events.csv`.
 
 > The key `localtest` is for local testing only. Use your own value in any real deployment.
 
@@ -239,7 +263,7 @@ app/web/            HTML, CSS and JavaScript pages
 deploy/traefik/     reverse proxy routing and TLS configuration
 scripts/            helper scripts (development certificate generator, release check)
 tests/              pytest suite, including the penetration tests
-docs/               test evidence and the final report
+docs/               how-it-works walkthrough, test evidence and the final report
 assets/             README banner
 ```
 

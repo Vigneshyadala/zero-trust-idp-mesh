@@ -240,9 +240,13 @@ Expected: JSON with an `access_token`, an `id_token`, `token_type` `Bearer` and 
 
 ![Feature overview](docs/screenshots/features.png)
 
-**Admin audit dashboard**, unlocked with the admin key and showing denied token requests:
+**Admin audit dashboard**, unlocked with the admin key. Successful token issues appear with a green badge:
 
-![Admin dashboard](docs/screenshots/admin.png)
+![Admin dashboard with successful tokens](docs/screenshots/admin-success.png)
+
+**Replay test.** Reusing an authorization code is refused with `invalid_grant` and logged as a denied request:
+
+![Admin dashboard with a denied replay](docs/screenshots/admin-denied.png)
 
 ## 📁 Project layout
 

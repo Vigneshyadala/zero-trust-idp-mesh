@@ -60,3 +60,12 @@ def test_admin_script_talks_only_to_the_admin_api_on_the_same_origin():
         "/admin/api/events.csv?limit=500",
     }
     assert not re.search(r"https?://", js)
+
+
+def test_admin_table_does_not_break_words_except_long_values():
+    css = client.get("/assets/admin.css").text
+    badge = re.search(r"\.admin \.badge\{([^}]*)\}", css).group(1)
+    assert "white-space:nowrap" in badge
+    cell = re.search(r"\.admin td\{([^}]*)\}", css).group(1)
+    assert "break-all" not in cell
+    assert re.search(r"td:nth-child\(4\)[^{]*\{[^}]*word-break:break-all", css)

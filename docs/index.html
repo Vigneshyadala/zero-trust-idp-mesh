@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero-Trust IdP Mesh – Recorded Demo</title>
+<meta name="description" content="Replay of a real sign-in, a replay attack that is refused, and 36 passing attack tests for Zero-Trust IdP Mesh.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#160a0e;--card:#22111a;--line:#4a2330;--crimson:#ff3b5c;--rose:#ffb088;--amber:#ffb020;--teal:#2dd4bf;--text:#f6e9ec;--mute:#b99aa3}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 700px at 80% -10%,#3a1220 0,transparent 60%),var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:"Space Grotesk",sans-serif;margin:0}
+a{color:var(--rose)}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px;flex-wrap:wrap}
+.badge{font:600 12px "JetBrains Mono",monospace;letter-spacing:.08em;padding:6px 12px;border:1px solid var(--amber);color:var(--amber);border-radius:99px;display:inline-flex;gap:8px;align-items:center}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ffb02099}100%{box-shadow:0 0 0 10px #ffb02000}}
+.hero{position:relative;padding:56px 0 40px;text-align:center;overflow:hidden}
+.rings{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.rings span{position:absolute;border:1px solid var(--crimson);border-radius:50%;width:120px;height:120px;margin:-60px;opacity:0;animation:ring 6s infinite}
+.rings span:nth-child(2){animation-delay:2s}.rings span:nth-child(3){animation-delay:4s}
+@keyframes ring{0%{transform:scale(.5);opacity:.5}100%{transform:scale(7);opacity:0}}
+.hero h1{font-size:clamp(34px,7vw,64px);line-height:1.05;position:relative}
+.hero h1 b{background:linear-gradient(90deg,var(--crimson),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mute);max-width:620px;margin:16px auto;position:relative}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:28px;position:relative}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat b{display:block;font:700 34px "Space Grotesk",sans-serif;color:var(--rose)}
+.stat span{color:var(--mute);font-size:13px}
+section{padding:36px 0}
+h2{font-size:28px;margin-bottom:6px}.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.stage{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block}
+.node rect{fill:#2b1521;stroke:var(--line);stroke-width:1.5}.node text{fill:var(--text);font:600 13px "Space Grotesk"}
+.node.on rect{stroke:var(--crimson);filter:drop-shadow(0 0 8px #ff3b5c88)}
+.lane{stroke:var(--line);stroke-dasharray:4 5}
+.pkt{fill:var(--rose);opacity:0}
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{all:unset;cursor:pointer;padding:10px 12px;border-radius:10px;border:1px solid transparent;color:var(--mute);display:block}
+.step:focus-visible{outline:2px solid var(--rose)}
+.step.on{border-color:var(--crimson);background:#2f1520;color:var(--text)}
+.step small{display:block;font-size:13px}
+.ctrl{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+button.btn{font:600 14px Inter;background:var(--crimson);color:#fff;border:0;border-radius:10px;padding:9px 16px;cursor:pointer}
+button.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.term{background:#0d0509;border:1px solid var(--line);border-radius:12px;padding:14px;font:13px/1.55 "JetBrains Mono",monospace;min-height:260px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+.term .p{color:var(--teal)}.term .ok{color:#7ee787}.term .err{color:var(--crimson)}.term .d{color:var(--mute)}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--rose);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:6px}
+.t{display:block;aspect-ratio:1;border-radius:8px;background:#2b1521;border:1px solid var(--line);position:relative;transition:.25s}
+.t.pass{background:#12332e;border-color:var(--teal);box-shadow:0 0 12px #2dd4bf44}
+.tip{margin-top:14px;min-height:48px;font:13px "JetBrains Mono",monospace;color:var(--mute)}
+.tip b{color:var(--teal)}
+table{width:100%;border-collapse:collapse;font:13px "JetBrains Mono",monospace}
+th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--mute)}
+.pill{padding:2px 10px;border-radius:99px;font-weight:600}.g{background:#12332e;color:var(--teal)}.r{background:#3d1220;color:var(--crimson)}
+tr.new{animation:slide .5s}@keyframes slide{from{opacity:0;transform:translateX(-14px)}}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.shots img{width:100%;border-radius:12px;border:1px solid var(--line)}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.links a{border:1px solid var(--line);border-radius:10px;padding:9px 14px;text-decoration:none;background:var(--card)}
+footer{padding:36px 0 60px;color:var(--mute);font-size:13px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="wrap">
+<div class="top"><b style="font-family:'Space Grotesk'">🛡️ Zero-Trust IdP Mesh</b><span class="badge"><i></i>RECORDED RUN · NO SERVER</span></div>
+<header class="hero"><div class="rings"><span></span><span></span><span></span></div>
+<h1>Never trust.<br><b>Always verify.</b></h1>
+<p>A decentralized identity provider with passkeys, DIDs and a zero-trust policy engine. This page replays the real sign-in flow, a refused replay attack and the 36 attack tests. Nothing here talks to a server.</p>
+<div class="stats">
+<div class="stat"><b data-n="193">0</b><span>automated tests passing</span></div>
+<div class="stat"><b data-n="36">0</b><span>attack tests, all refused</span></div>
+<div class="stat"><b data-n="0">0</b><span>passwords stored</span></div>
+<div class="stat"><b data-n="60">0</b><span>seconds an auth code lives</span></div>
+</div></header>
+
+<section id="flow"><h2>1 · The sign-in, step by step</h2><p class="sub">Click a step or press play. Follows <a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh/blob/main/docs/how-it-works.md">docs/how-it-works.md</a>.</p>
+<div class="card stage"><div>
+<svg viewBox="0 0 420 270" role="img" aria-label="Sequence between browser, relying party and identity provider">
+<g class="node" id="nB"><rect x="10" y="10" width="110" height="40" rx="10"/><text x="65" y="35" text-anchor="middle">Browser</text></g>
+<g class="node" id="nR"><rect x="155" y="10" width="110" height="40" rx="10"/><text x="210" y="35" text-anchor="middle">Relying party</text></g>
+<g class="node" id="nI"><rect x="300" y="10" width="110" height="40" rx="10"/><text x="355" y="35" text-anchor="middle">IdP</text></g>
+<line class="lane" x1="65" y1="50" x2="65" y2="260"/><line class="lane" x1="210" y1="50" x2="210" y2="260"/><line class="lane" x1="355" y1="50" x2="355" y2="260"/>
+<circle id="pkt" class="pkt" r="7" cx="65" cy="80"/>
+<text id="cap" x="210" y="268" text-anchor="middle" fill="#ffb088" font-size="12" font-family="JetBrains Mono"></text>
+</svg>
+<div class="ctrl"><button class="btn" id="play">▶ Play</button><button class="btn ghost" id="next">Next step</button></div>
+</div><div class="steps" id="steps"></div></div></section>
+
+<section id="term"><h2>2 · Sign in, then try to replay the code</h2><p class="sub">The exact commands from the README demo. Responses are shortened; secrets are never shown.</p>
+<div class="card"><div class="term" id="tty" aria-live="polite"></div>
+<div class="ctrl"><button class="btn" id="run">▶ Run recording</button><button class="btn ghost" id="skip">Show all</button></div></div></section>
+
+<section id="audit"><h2>3 · What the audit log recorded</h2><p class="sub">After the two commands above, the admin dashboard shows one success and one denial.</p>
+<div class="card"><table><thead><tr><th>Event</th><th>Result</th><th>Why</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+
+<section id="pen"><h2>4 · 36 attack tests</h2><p class="sub">Each square is a real test from <a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh/blob/main/docs/pentest-results.txt">docs/pentest-results.txt</a>. Hover or tap one for its name.</p>
+<div class="card"><div class="wall" id="wall"></div><div class="tip" id="tip">Waiting…</div>
+<div class="ctrl"><button class="btn ghost" id="again">Run them again</button></div></div></section>
+
+<section><h2>5 · Screenshots from the real app</h2><p class="sub">Taken from the running service.</p>
+<div class="shots"><img src="screenshots/home.png" alt="Landing page" loading="lazy"><img src="screenshots/admin-success.png" alt="Admin dashboard, tokens issued" loading="lazy"><img src="screenshots/admin-denied.png" alt="Admin dashboard, replay denied" loading="lazy"></div></section>
+
+<section class="links"><a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh">Source code</a><a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh#-quick-start">Run it yourself</a><a href="https://github.com/Vigneshyadala/zero-trust-idp-mesh/blob/main/docs/report/full-report.md">Full report</a><a href="https://vigneshyadala.github.io/portfolio/">Portfolio</a></section>
+<footer>Built by Vignesh Yadala · Zaalima Development Pvt. Ltd. internship · This is a recording of a local run, not a hosted service.</footer>
+</div>
+<script>
+const TESTS=["replay_of_authorization_code_is_refused", "replay_of_revoked_token_is_refused", "expired_token_is_refused", "unsigned_alg_none_token_is_refused", "algorithm_confusion_hs256_with_public_key_is_refused", "token_signed_with_attacker_key_is_refused", "tampered_payload_is_refused", "token_for_another_audience_is_refused", "token_with_wrong_issuer_is_refused", "authorization_without_pkce_is_refused", "pkce_downgrade_to_plain_is_refused", "unregistered_redirect_uri_gets_no_redirect", "stolen_code_with_wrong_verifier_is_refused", "failed_guess_burns_the_code_for_the_real_owner_too", "missing_code_verifier_is_refused", "code_cannot_be_redeemed_for_a_different_redirect_uri", "unknown_client_is_refused", "token_responses_forbid_caching", "introspection_refuses_callers_without_the_key", "introspection_refuses_alg_none_token", "introspection_refuses_algorithm_confusion_token", "introspection_refuses_token_signed_with_attacker_key", "introspection_refuses_tampered_payload", "introspection_refuses_wrong_issuer", "id_token_cannot_be_introspected_as_an_access_token", "inactive_answers_do_not_reveal_why", "introspection_key_guessing_is_rate_limited", "authorization_code_brute_forcing_hits_the_rate_limit", "rate_limited_request_does_not_consume_a_valid_code", "login_with_forged_signature_is_refused", "assertion_of_the_wrong_ceremony_type_is_refused", "login_without_user_verification_is_refused_when_required", "registration_ceremony_cannot_be_used_to_log_in", "login_ceremony_cannot_be_used_to_register", "one_authorization_request_yields_at_most_one_code", "strict_policy_blocks_a_passkey_login_without_user_verification"];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=id=>document.getElementById(id), sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+// count-up
+document.querySelectorAll('[data-n]').forEach(e=>{const n=+e.dataset.n;if(reduce||!n){e.textContent=n;return}let i=0;const t=setInterval(()=>{i+=Math.max(1,Math.ceil(n/40));if(i>=n){i=n;clearInterval(t)}e.textContent=i},30)});
+// flow
+const X={B:65,R:210,I:355};
+const FLOW=[
+ ["R","B","The app sends the browser to /authorize","Client, redirect URI and PKCE (S256) challenge are checked first."],
+ ["B","I","Browser opens the passkey login","The user creates or uses a DID and a WebAuthn passkey. No password."],
+ ["I","I","Zero-trust policy engine scores the request","IP, device, user verification and time of day are weighed. High risk burns the code."],
+ ["I","R","A one-time code goes back to the app","The code lives 60 seconds and works once."],
+ ["R","I","The app exchanges the code at /token","It must also send the PKCE verifier."],
+ ["I","R","Signed tokens are issued and logged","EdDSA-signed access and ID tokens. An audit event is written; tokens are not."]];
+let cur=-1,busy=false;
+const stepsEl=$('steps');
+FLOW.forEach((s,i)=>{const b=document.createElement('button');b.className='step';b.innerHTML=`<b>${i+1}. ${s[2]}</b><small>${s[3]}</small>`;b.onclick=()=>show(i);stepsEl.appendChild(b)});
+async function show(i){
+ cur=i;[...stepsEl.children].forEach((c,k)=>c.classList.toggle('on',k===i));
+ const [a,b]=FLOW[i];['B','R','I'].forEach(k=>$('n'+k).classList.toggle('on',k===a||k===b));
+ const y=80+i*32,p=$('pkt');$('cap').textContent=FLOW[i][2].slice(0,52);
+ p.setAttribute('cy',y);p.setAttribute('cx',X[a]);p.style.opacity=1;
+ if(reduce){p.setAttribute('cx',X[b]);return}
+ const t0=performance.now(),d=700;
+ await new Promise(res=>{(function f(t){const k=Math.min(1,(t-t0)/d);p.setAttribute('cx',X[a]+(X[b]-X[a])*k);k<1?requestAnimationFrame(f):res()})(t0)});
+}
+$('next').onclick=()=>show((cur+1)%FLOW.length);
+$('play').onclick=async()=>{if(busy)return;busy=true;for(let i=0;i<FLOW.length;i++){await show(i);await sleep(900)}busy=false};
+show(0);
+// terminal
+const SCRIPT=[
+ ["p","$ IDP_ADMIN_KEY=localtest IDP_ISSUER=http://localhost:23456 uvicorn app.main:app --port 23456"],
+ ["d","INFO:     Uvicorn running on http://127.0.0.1:23456"],
+ ["d","# browser: open /authorize, create identity, register passkey, sign in"],
+ ["d","# browser lands on localhost:8080/callback?code=…&state=abc"],
+ ["p","$ curl -s -X POST http://localhost:23456/token -d grant_type=authorization_code -d code=<code> -d redirect_uri=http://localhost:8080/callback -d client_id=demo-client -d code_verifier=<verifier>"],
+ ["ok",'{"access_token":"eyJ…","id_token":"eyJ…","token_type":"Bearer","expires_in":3600}'],
+ ["p","$ # replay: the very same command again"],
+ ["err",'{"error":"invalid_grant", …}   ← an authorization code works only once'],
+ ["d","# open /admin with the key, press Load: one token_issued, one token_denied"]];
+const tty=$('tty');let gen=0,started=false;
+function line(c,t){const d=document.createElement('div');d.className=c;d.textContent=t;tty.appendChild(d);tty.scrollTop=1e9;return d}
+async function runTerm(fast){
+ const my=++gen;started=true;tty.textContent='';$('rows').textContent='';
+ for(const [c,t] of SCRIPT){
+  if(my!==gen)return;
+  const d=line(c,'');
+  if(c==='p'&&!fast&&!reduce){for(const ch of t){if(my!==gen)return;d.textContent+=ch;if(Math.random()<.35)await sleep(8)}}else d.textContent=t;
+  if(!fast)await sleep(c==='p'?350:550);
+  if(t.startsWith('{"access'))addRow('token_issued','success','valid code and verifier');
+  if(t.startsWith('{"error"'))addRow('token_denied','error','code already used (replay)');
+ }
+ }
+function addRow(e,r,w){const tr=document.createElement('tr');tr.className='new';tr.innerHTML=`<td>${e}</td><td><span class="pill ${r==='success'?'g':'r'}">${r}</span></td><td>${w}</td>`;$('rows').appendChild(tr)}
+$('run').onclick=()=>runTerm(false);$('skip').onclick=()=>runTerm(true);
+// pen tests
+const wall=$('wall'),tip=$('tip');
+TESTS.forEach((n,i)=>{const d=document.createElement('button');d.className='t';d.tabIndex=0;d.setAttribute('aria-label',n);
+ const show=()=>{tip.innerHTML=`<b>PASSED</b> ${n.replace(/_/g,' ')}`};d.onmouseenter=show;d.onfocus=show;d.onclick=show;wall.appendChild(d)});
+async function runWall(){const ts=[...wall.children];ts.forEach(t=>t.classList.remove('pass'));
+ for(let i=0;i<ts.length;i++){ts[i].classList.add('pass');tip.innerHTML=`<b>PASSED</b> ${TESTS[i].replace(/_/g,' ')}`;await sleep(70)}
+ tip.innerHTML=`<b>36 passed</b> · every attack was refused`}
+$('again').onclick=runWall;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);if(e.target.id==='pen')runWall();if(e.target.id==='term'&&!started)runTerm(false)}}),{threshold:.35});
+io.observe($('pen'));io.observe($('term'));
+</script></body></html>

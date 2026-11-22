@@ -11,6 +11,10 @@
 ![Redis](https://img.shields.io/badge/REDIS-BLOOM-ff3b5c?style=for-the-badge&logo=redis&logoColor=white&labelColor=1a1024)
 ![Tests](https://img.shields.io/badge/TESTS-193%20PASSING-8b5cf6?style=for-the-badge&labelColor=1a1024)
 
+<a href="https://vigneshyadala.github.io/zero-trust-idp-mesh/">
+<img src="https://img.shields.io/badge/🚀_LIVE_DEMO-RECORDED_RUN-2dd4bf?style=for-the-badge&labelColor=1a1024" alt="Live demo"/>
+</a>
+
 **[About](#-about) · [Features](#-features) · [Architecture](#-architecture) · [Quick start](#-quick-start) · [Demo](#-demo-sign-in-and-replay-test) · [Security](#-security) · [Developer](#-developer)**
 
 </div>
@@ -175,6 +179,8 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml down
 A step-by-step walkthrough with a sequence diagram is in [docs/how-it-works.md](docs/how-it-works.md).
 
 ## 🎬 Demo: sign-in and replay test
+
+> 🚀 **No setup?** Watch a [recorded run in your browser](https://vigneshyadala.github.io/zero-trust-idp-mesh/): the sign-in flow, the refused replay and all 36 attack tests. It replays a local run and does not talk to a server.
 
 A manual end-to-end check that takes about three minutes. Any free port works; 23456 is used here (see [Troubleshooting](#-troubleshooting) if port 8000 is blocked on Windows).
 

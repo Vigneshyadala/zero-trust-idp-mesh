@@ -13,6 +13,7 @@ body{margin:0;background:radial-gradient(1200px 700px at 80% -10%,#3a1220 0,tran
 h1,h2,h3{font-family:"Space Grotesk",sans-serif;margin:0}
 a{color:var(--rose)}
 .top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.25}.brand b{font-family:'Space Grotesk',sans-serif;font-size:18px}.by{font:600 11px 'JetBrains Mono',monospace;letter-spacing:.18em;color:var(--rose);text-decoration:none;margin-left:26px}.by:hover{color:var(--crimson)}
 .badge{font:600 12px "JetBrains Mono",monospace;letter-spacing:.08em;padding:6px 12px;border:1px solid var(--amber);color:var(--amber);border-radius:99px;display:inline-flex;gap:8px;align-items:center}
 .badge i{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1.6s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 #ffb02099}100%{box-shadow:0 0 0 10px #ffb02000}}
@@ -67,7 +68,7 @@ footer{padding:36px 0 60px;color:var(--mute);font-size:13px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="wrap">
-<div class="top"><b style="font-family:'Space Grotesk'">🛡️ Zero-Trust IdP Mesh</b><span class="badge"><i></i>RECORDED RUN · NO SERVER</span></div>
+<div class="top"><div class="brand"><b>🛡️ Zero-Trust IdP Mesh</b><a href="https://vigneshyadala.github.io/portfolio/" class="by">BY VIGNESH YADALA</a></div><span class="badge"><i></i>RECORDED RUN · NO SERVER</span></div>
 <header class="hero"><div class="rings"><span></span><span></span><span></span></div>
 <h1>Never trust.<br><b>Always verify.</b></h1>
 <p>A decentralized identity provider with passkeys, DIDs and a zero-trust policy engine. This page replays the real sign-in flow, a refused replay attack and the 36 attack tests. Nothing here talks to a server.</p>
